@@ -1,0 +1,85 @@
+% heuristic and deterministic one
+
+% De Jong 1, Schwefel's, Rastrigin's, Michalewicz's
+
+% Michalewicz function 
+n = 2;
+m = 10;
+s = 0;
+for i = 1:n;
+    s = s+sin(x(i))*(sin(i*x(i)^2/pi))^(2*m);
+end
+y = -s;
+
+domain:
+0 ≤ xi ≤ π
+
+% Rastrigin function
+n = 2; 
+s = 0;
+for j = 1:n
+    s = s+(x(j)^2-10*cos(2*pi*x(j))); 
+end
+y = 10*n+s;
+
+domain:
+−5.12 ≤ xi ≤ 5.12
+
+% Schwefel function
+n = 2;
+s = sum(-x.*sin(sqrt(abs(x))));
+y = 418.9829*n+s;
+
+domain:
+−500 ≤ xi ≤ 500
+
+% De Jong 1 function
+f1(x)=sum(x(i)^2)
+
+domain:
+−5.12 ≤ xi ≤ 5.12
+
+
+% n is the count of the array
+
+
+% deterministic approach: take the domain and a step and compute for each value the function and then decide the best
+for()
+
+% heuristic approach: 
+take the domain and choose randomly a canditate
+compute neighbohor(canditate)
+if(better)
+    canditate = neighbohor
+else
+    stop
+
+
+% hill climbing
+t := 0
+initialize best
+repeat
+    local := FALSE
+    select a candidate solution (bitstring) vc at random
+    evaluate vc
+    repeat
+        vn := Improve(Neghborhood(vc))
+ 	if eval(vn) is better than eval(vc)
+	then vc := vn
+	else local := TRUE
+    until local
+    t := t + 1
+    if vc is better than best
+    then best := vc
+until t = MAX
+
+Reprezentarea solutiilor:
+    vectori de numere reale
+    siruri binare: spatiul de cautare se va disctretiza pana la o anumita precizie 10-d.
+    Un interval [a, b] va fi impartit in N = (b - a) * 10d subintervale egale.
+    Pentru a putea reprezenta cele (b - a) * 10d valori, este nevoie de un numar n = parte_intreaga_superioara(log2(N)) de biti.
+    Lungimea sirului de biti care reprezinta o solutie candidat va fi suma lungimilor reprezentarilor pentru fiecare parametru al functiei de optimizat.
+    In momentul evaluarii solutiei (apelul functiei de optimizat) este necesara decodificarea fiecarui parametru reprezentat ca sir de biti in numar real, dupa formula:
+    Xreal = a + decimal(xbiti) * (b - a) / (2n - 1)
+    !!! Nu folositi reprezentari de forma vector de vectori de biti. Folositi un simplu vector de biti.
+    Adica, reprezentati o solutie candidat ca un vector de biti, nu o matrice de biti.
