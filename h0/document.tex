@@ -1,47 +1,8 @@
-% heuristic and deterministic one
+bibliography:
 
-% De Jong 1, Schwefel's, Rastrigin's, Michalewicz's
-
-% Michalewicz function 
-n = 2;
-m = 10;
-s = 0;
-for i = 1:n;
-    s = s+sin(x(i))*(sin(i*x(i)^2/pi))^(2*m);
-end
-y = -s;
-
-domain:
-0 ≤ xi ≤ π
-
-% Rastrigin function
-n = 2; 
-s = 0;
-for j = 1:n
-    s = s+(x(j)^2-10*cos(2*pi*x(j))); 
-end
-y = 10*n+s;
-
-domain:
-−5.12 ≤ xi ≤ 5.12
-
-% Schwefel function
-n = 2;
-s = sum(-x.*sin(sqrt(abs(x))));
-y = 418.9829*n+s;
-
-domain:
-−500 ≤ xi ≤ 500
-
-% De Jong 1 function
-f1(x)=sum(x(i)^2)
-
-domain:
-−5.12 ≤ xi ≤ 5.12
-
-
-% n is the count of the array
-
+https://en.cppreference.com/w/cpp/thread/async
+https://en.cppreference.com/w/cpp/thread/future 
+https://en.cppreference.com/w/cpp/numeric/random/bernoulli_distribution
 
 % deterministic approach: take the domain and a step and compute for each value the function and then decide the best
 for()
@@ -73,6 +34,30 @@ repeat
     then best := vc
 until t = MAX
 
+// mininum maximum execution
+    double global_minimum = 0; // function::maximum
+    unsigned char dimension = 0;
+    unsigned int N = 0; 
+    for(unsigned char index_test = 0; index_test < SAMPLE_NUMBER; index_test++)
+    {
+        double local_minimum = 0;
+        for(unsigned int index_number = 0; index_number < N; index_number++)
+        {
+            //double local_minimum = function::exe(dimension);
+            
+            // compute neigbohood of local_minimum 
+            // comparison 
+
+            if(true); // better option 
+            
+        }
+
+        if(local_minimum > global_minimum)
+            global_minimum = local_minimum;
+        
+    }
+
+
 Reprezentarea solutiilor:
     vectori de numere reale
     siruri binare: spatiul de cautare se va disctretiza pana la o anumita precizie 10-d.
@@ -83,3 +68,199 @@ Reprezentarea solutiilor:
     Xreal = a + decimal(xbiti) * (b - a) / (2n - 1)
     !!! Nu folositi reprezentari de forma vector de vectori de biti. Folositi un simplu vector de biti.
     Adica, reprezentati o solutie candidat ca un vector de biti, nu o matrice de biti.
+
+
+
+//
+
+\documentclass{article}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+
+\lstdefinestyle{cppstyle}{
+    Language=C++,
+    Basicstyle=\ttfamily,
+    Keywordstyle=\color{blue}\ttfamily,
+    Stringstyle=\color{red}\ttfamily,
+    Commentstyle=\color{green}\ttfamily,
+    Numbers=left,
+    Numberstyle=\tiny,
+    Numbersep=5pt,
+    Backgroundcolor=\color{lightgray},
+    Breaklines=true,
+    Breakatwhitespace=true,
+    Showstringspaces=false,
+}
+
+\title{H1 – Testing Standard Benchmark Functions using Hill Climber and Simulated Annealing}
+\author{Mitila Alin Remus \\ 2E3, FII, UAIC \\ Professor: Croitoru Nicolae Eugen}
+\date{November 8, 2023}
+
+\begin{document}
+
+\maketitle
+
+\let\oldsection\section
+\renewcommand{\section}[1]{
+  \oldsection{#1}
+  \noindent
+}
+
+\newpage
+\section{Introduction}
+The purpose of this paper is to document the efficiency of the Hill Climber and Simulated Annealing algorithms by testing them on 4 standard benchmark functions: Michaelwicz, Rastrigin, Schwefel, and De Jong 1. We are going to compare results from each approach and for 2-dimensional, 10-dimensional, and 30-dimensional graphs to emphasize differences.
+
+\begin{itemize}
+\item Michaelwicz’s function:
+$$f(\mathbf{x}) = -\sum_{i=1}^{n} \sin(x_i) \cdot \left(\sin\left(ix_i^2 / \pi\right)\right)^{2m} $$
+\item Rastrigin’s function:
+$$f(\mathbf{x}) = A \cdot n + \sum_{i=1}^{n} \left( x_i^2 – A \cdot \cos(2\pi x_i) \right) $$
+\item Schwefel function:
+$$f(\mathbf{x}) = -\sum_{i=1}^{n} x_i \cdot \sin\left(\sqrt{|x_i|}\right)$$
+\item De Jong 1 function:
+$$f(\mathbf{x}) = \sum_{i=1}^{n} x_i^2$$
+\end{itemize}
+
+As we have seen from the previous paper (H0), achieving a perfect result can be time-consuming, often requiring the program to run for hours in a deterministic approach for a 10-dimensional function. How do our previous findings compare to these more advanced meta-heuristic, almost genetic algorithms?
+
+\newpage
+\section{Method}
+The way we implement the Hill Climber is to generate a random value from the graph and associate it with a bitstring calculated using this formula:
+$$\text{length} = \left\lceil \log_2\left( (\text{range} \times 10^{\text{precision}}) + 1 \right) \right\rceil$$
+
+Where we have chosen the precision as -5. \\
+We are going to repeat this for 1000 iterations. \\
+To determine whether the minimum could be near the randomly chosen point, we calculate the “neighbors” of that point by negating the bits of the assigned bitstring one by one and then calculating each neighbor’s value in the graph.\\
+
+If every neighbor is worse than the current point, we discard the point and start again with a new generated value to test. Otherwise, we consider the best improvement as the current point and further evaluate its neighbors. This is a code snippet that shows how finding the best improvement is done:
+
+\begin{lstlisting}[style=cppstyle, caption={}, label={your-label}]
+Double improve_best(double x, vector<string> neighbours, int function)
+{
+    Double best = calculate_value2(x, function);
+    For (auto I : neighbours)
+    {
+        Double value = calculate_value(x, I, function);
+        If (value < best)
+            Best = value;
+    }
+    Return best;
+}
+\end{lstlisting}
+
+In the case that we are stuck in a local minimum and can’t get out using the neighbors’ system, we, again, regenerate the current point. \\
+Simulated Annealing uses the same principles as Hill Climber but is more efficient in most cases because it utilizes the concept of temperature. 
+
+Basically, what the temperature does is it dictates that the closer we are to finishing our iterations, the lower the chance is that we generate a new random value to start testing, and instead, we keep going with our current one.
+
+\newpage
+\section{Data findings}
+The tables below contain the data obtained after successfully running each function 30 different times.
+\subsection{Hill Climber Best Improvement results}
+
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+ Function & Avg Solution & Avg time & Best solution & Worst solution \\ \hline
+ Michaelwicz 2D & -1.7995 & 0.12s & -1.8012 & -1.7953 \\ \hline
+ Michaelwicz 10D & -8.4032 & 3.4s & -8.4973 & -8.3288 \\ \hline
+ Michaelwicz 30D & -25.9297 & 93.6s & -26.4340 & -25.5809 \\ \hline
+ Rastrigin 2D & 0 & 0.12s & 0 & 0 \\ \hline
+ Rastrigin 10D & 4.8950 & 3.2s & 3.2561 & 7.1592 \\ \hline
+ Rastrigin 30D & 26.2323 & 62.1s & 23.9317 & 30.1844 \\ \hline
+ Schwefel 2D & 0 & 0.15s & 0 & 0 \\ \hline
+ Schwefel 10D & -3981.25 & 2.74s & -3.8221.39 & -4102.95 \\ \hline
+ Schwefel 30D & -10967.22 & 32.2s & -10383.82 & -11426.64 \\ \hline
+ De Jong 1 2D & 0 & 0.08s & 0 & 0 \\ \hline
+ De Jong 1 10D & 0 & 0.39s & 0 & 0 \\ \hline
+ De Jong 1 30D & 0 & 3.78s & 0 & 0 \\ \hline
+\end{tabular}
+
+\subsection{Hill Climber First Improvement results}
+
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+ Function & Avg Solution & Avg time & Best solution & Worst solution \\ \hline
+ Michaelwicz 2D & -1.7986 & 0.09s & -1.8012 & -1.7942 \\ \hline
+ Michaelwicz 10D & -8.3276 & 2.8s & -8.4712 & -8.3029 \\ \hline
+ Michaelwicz 30D & -24.3217 & 58.1s & -25.6373 & -23.85512 \\ \hline
+ Rastrigin 2D & 0 & 0.06s & 0 & 0 \\ \hline
+ Rastrigin 10D & 5.5854 & 2.5s & 3.7992 & 8.5125 \\ \hline
+ Rastrigin 30D & 40.2323 & 35.7s & 35.7832 & 45.4266 \\ \hline
+ Schwefel 2D & 0 & 0.07s & 0 & 0 \\ \hline
+ Schwefel 10D & -4176.77 & 1.1s & -3922.45 & -4228.81 \\ \hline
+ Schwefel 30D & -10989.76 & 17.7s & -10692.51 & -11572.92 \\ \hline
+ De Jong 1 2D & 0 & 0.07s & 0 & 0 \\ \hline
+ De Jong 1 10D & 0 & 0.22s & 0 & 0 \\ \hline
+ De Jong 1 30D & 0 & 1.85s & 0 & 0 \\ \hline
+\end{tabular}
+
+\subsection{Hill Climber Worst Improvement results}
+
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+ Function & Avg Solution & Avg time & Best solution & Worst solution \\ \hline
+Michaelwicz 2D & -2.0023 & 0.12s & -3.28173 & -3.01371 \\ \hline
+Michaelwicz 10D & -8.1005 & 3.4s & -8.31314 & -7.48913 \\ \hline
+Michaelwicz 30D & -24.5511 & 61.2s & -24.13092 & -24.97161 \\ \hline
+Rastrigin 2D & -0.025 & 0.06s & 0 & 0 \\ \hline
+Rastrigin 10D & 6.8725 & 3.1s & 3.08713 & 9.19484 \\ \hline
+Rastrigin 30D & 35.8275 & 39.3s & 34.79132 & 45.79041 \\ \hline
+Schwefel 2D & 0 & 0.13s & 0 & 0 \\ \hline
+Schwefel 10D & -4048.32 & 2.7s & -3982.99781 & -3620.78411 \\ \hline
+Schwefel 30D & -10590.42 & 29.8s & -10690.65842 & -10107.55902 \\ \hline
+De Jong 1 2D & 0 & 0.06s & 0 & 0 \\ \hline
+De Jong 1 10D & 0 & 0.42s & 0 & 0 \\ \hline
+De Jong 1 30D & 0 & 3.6s & 0 & 0 \\ \hline
+\end{tabular}
+
+\subsection{Simulated Annealing results}
+
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+ Function & Avg Solution & Avg time & Best solution & Worst solution \\ \hline
+Michaelwicz 2D & -1.7920 & 0.08s & -1.8012 & -1.7942 \\ \hline
+Michaelwicz 10D & -9.5866 & 2.2s & -8.4712 & -8.3029 \\ \hline
+Michaelwicz 30D & -28.9837 & 17.7s & -25.6373 & -23.85512 \\ \hline
+Rastrigin 2D & 1.2 & 0.6s & 0.8 & 1.5 \\ \hline
+Rastrigin 10D & 1.3 & 2.1s & 1.1 & 2.6 \\ \hline
+Rastrigin 30D & 30.2 & 8.4s & 25.6 & 35.8 \\ \hline
+Schwefel 2D & 0 & 0.06s & 0 & 0 \\ \hline
+Schwefel 10D & -4189.63 & 3.3s & -4189.81 & -4189.10 \\ \hline
+Schwefel 30D & -12567.92 & 11.8s & -12568.85 & -12567.61 \\ \hline
+De Jong 1 2D & 0 & 0.43s & 0 & 0 \\ \hline
+De Jong 1 10D & 0 & 0.81s & 0 & 0 \\ \hline
+De Jong 1 30D & 0 & 2.90s & 0 & 0 \\ \hline
+\end{tabular}
+
+\newpage
+\section{Conclusion}
+
+After taking a look at the results we have obtained, we can safely say that the Hill Climber algorithm is a really efficient algorithm that manages to determine a solution that is either the correct one or one that is really close to it in a reasonable amount of time. The exact time is way lower than iterating through the whole graph and comparable to that of a probabilistic algorithm.
+
+We can also observe that Simulated Annealing provides us in a more restrained time interval with a usually better result, so it is definitely more useful in most cases to use this variant as opposed to Hill Climber (or a deterministic or heuristic approach).  
+
+\section{Bibliography}
+
+\begin{itemize}
+\item Laboratory’s website \\
+\href{URL}{https://profs.info.uaic.ro/~eugennc/teaching/ga/}
+\item Study about Hill Climber and Simmulated Annealing \\
+\href{URL}{https://github.com/AlexNeagu123/Global\_Minimum-Simulated\_Annealing/blob/master/src/Algorithms.h}
+\item Website about Michaelwicz’s function: \\
+\href{URL}{https://www.geatbx.com/ver\_3\_3/fcnfun12.htm}
+\item Website about Rastragin’s function: \\
+\href{URL}{https://www.sfu.ca/~ssurjano/rastr.html}
+\item Website about Schwefel’s function
+\href{URL}{https://www.sfu.ca/~ssurjano/schwef.html}
+\item Website about De Jong1 function \\
+\href{URL}{https://en.wikipedia.org/wiki/Test\_functions\_for\_optimization}
+\item Youtube video about simulatead annealing \\
+\href{URL}{https://youtu.be/eBmU1ONJ-os?si=3f02DUJ2uVsp8cj7}
+
+\end{itemize}
+
+\end{document}
