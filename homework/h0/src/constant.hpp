@@ -1,8 +1,11 @@
 #ifndef _0CONSTANT0_
 #define _0CONSTANT0_
 
+#define ERROR_CODE -1
+
 #define SAMPLE_NUMBER 30
 
+#define TO_PRECISION 100000
 #define PRECISION 5
 #define PI 3.14159
 

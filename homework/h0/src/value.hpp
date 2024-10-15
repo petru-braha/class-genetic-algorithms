@@ -5,6 +5,9 @@
 #include <time.h> 
 #include "constant.hpp"
 
+//------------------------------------------------
+// methods:
+
 double rand(double minimum, double maximum, unsigned char precision = 5)
 {
     // aiming to a evenly distributed values 
@@ -37,6 +40,9 @@ double rand(double minimum, double maximum, unsigned char precision = 5)
     ull result = mini + random;
     return ((double)result / multiplier);
 }
+
+//------------------------------------------------
+// class:
 
 class value
 {

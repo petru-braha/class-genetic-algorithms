@@ -1,0 +1,6 @@
+﻿  h0.cpp
+C:\Users\PETRU\Desktop\ga\homework\h0\src\bitstring.hpp(141,35): warning C4390: ';': empty controlled statement found; is this the intent?
+  (compiling source file 'h0.cpp')
+  
+C:\Users\PETRU\Desktop\ga\homework\h0\h0.cpp(52,27): warning C4390: ';': empty controlled statement found; is this the intent?
+  h0.vcxproj -> C:\Users\PETRU\Desktop\ga\homework\x64\Debug\h0.exe
