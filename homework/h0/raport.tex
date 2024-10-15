@@ -1,86 +1,3 @@
-bibliography:
-
-https://en.cppreference.com/w/cpp/thread/async
-https://en.cppreference.com/w/cpp/thread/future 
-https://en.cppreference.com/w/cpp/numeric/random/bernoulli_distribution
-https://youtu.be/8cRQT93Olek?si=ywNdLhjmUAqlAW28
-https://www.binaryconvert.com/result_double.html?decimal=052052050046054055056057
-
-decisions:
-function id
-
-what can be imrpoved
-- thread
-
-% deterministic approach: take the domain and a step and compute for each value the function and then decide the best
-for()
-
-% heuristic approach: 
-take the domain and choose randomly a canditate
-compute neighbohor(canditate)
-if(better)
-    canditate = neighbohor
-else
-    stop
-
-
-% hill climbing
-t := 0
-initialize best
-repeat
-    local := FALSE
-    select a candidate solution (bitstring) vc at random
-    evaluate vc
-    repeat
-        vn := Improve(Neghborhood(vc))
- 	if eval(vn) is better than eval(vc)
-	then vc := vn
-	else local := TRUE
-    until local
-    t := t + 1
-    if vc is better than best
-    then best := vc
-until t = MAX
-
-// mininum maximum execution
-    double global_minimum = 0; // function::maximum
-    unsigned char dimension = 0;
-    unsigned int N = 0; 
-    for(unsigned char index_test = 0; index_test < SAMPLE_NUMBER; index_test++)
-    {
-        double local_minimum = 0;
-        for(unsigned int index_number = 0; index_number < N; index_number++)
-        {
-            //double local_minimum = function::exe(dimension);
-            
-            // compute neigbohood of local_minimum 
-            // comparison 
-
-            if(true); // better option 
-            
-        }
-
-        if(local_minimum > global_minimum)
-            global_minimum = local_minimum;
-        
-    }
-
-
-Reprezentarea solutiilor:
-    vectori de numere reale
-    siruri binare: spatiul de cautare se va disctretiza pana la o anumita precizie 10-d.
-    Un interval [a, b] va fi impartit in N = (b - a) * 10d subintervale egale.
-    Pentru a putea reprezenta cele (b - a) * 10d valori, este nevoie de un numar n = parte_intreaga_superioara(log2(N)) de biti.
-    Lungimea sirului de biti care reprezinta o solutie candidat va fi suma lungimilor reprezentarilor pentru fiecare parametru al functiei de optimizat.
-    In momentul evaluarii solutiei (apelul functiei de optimizat) este necesara decodificarea fiecarui parametru reprezentat ca sir de biti in numar real, dupa formula:
-    Xreal = a + decimal(xbiti) * (b - a) / (2n - 1)
-    !!! Nu folositi reprezentari de forma vector de vectori de biti. Folositi un simplu vector de biti.
-    Adica, reprezentati o solutie candidat ca un vector de biti, nu o matrice de biti.
-
-
-
-//
-
 \documentclass{article}
 \usepackage{graphicx}
 \usepackage{hyperref}
@@ -104,9 +21,9 @@ Reprezentarea solutiilor:
     Showstringspaces=false,
 }
 
-\title{H1 – Testing Standard Benchmark Functions using Hill Climber and Simulated Annealing}
-\author{Mitila Alin Remus \\ 2E3, FII, UAIC \\ Professor: Croitoru Nicolae Eugen}
-\date{November 8, 2023}
+\title{H0 – Testing Standard Benchmark Functions using Hill Climber}
+\author{Braha Petru Bogdan \\ 2E3, FII, UAIC \\ Professor: Croitoru Nicolae Eugen}
+\date{October 15, 2024}
 
 \begin{document}
 
@@ -256,18 +173,20 @@ We can also observe that Simulated Annealing provides us in a more restrained ti
 \begin{itemize}
 \item Laboratory’s website \\
 \href{URL}{https://profs.info.uaic.ro/~eugennc/teaching/ga/}
-\item Study about Hill Climber and Simmulated Annealing \\
-\href{URL}{https://github.com/AlexNeagu123/Global\_Minimum-Simulated\_Annealing/blob/master/src/Algorithms.h}
-\item Website about Michaelwicz’s function: \\
-\href{URL}{https://www.geatbx.com/ver\_3\_3/fcnfun12.htm}
-\item Website about Rastragin’s function: \\
-\href{URL}{https://www.sfu.ca/~ssurjano/rastr.html}
-\item Website about Schwefel’s function
-\href{URL}{https://www.sfu.ca/~ssurjano/schwef.html}
-\item Website about De Jong1 function \\
-\href{URL}{https://en.wikipedia.org/wiki/Test\_functions\_for\_optimization}
-\item Youtube video about simulatead annealing \\
-\href{URL}{https://youtu.be/eBmU1ONJ-os?si=3f02DUJ2uVsp8cj7}
+\item Test functions used \\
+\href{URL}{http://www-optima.amp.i.kyoto-u.ac.jp/member/student/hedar/Hedar_files/TestGO_files/Page364.htm}
+
+\item Thread manipulation \\
+\href{URL}{https://en.cppreference.com/w/cpp/thread/async}
+\item Thread manipulation \\
+\href{URL}{https://en.cppreference.com/w/cpp/thread/future} 
+
+\item Random number documentation \\
+\href{URL}{https://en.cppreference.com/w/cpp/numeric/random/bernoulli_distribution}
+\item Double precision bit manipulation \\
+\href{URL}{https://youtu.be/8cRQT93Olek?si=ywNdLhjmUAqlAW28}
+\item Double precision bit manipulation \\
+\href{URL}{https://www.binaryconvert.com/result_double.html?decimal=052052050046054055056057}
 
 \end{itemize}
 
