@@ -133,8 +133,6 @@
     <ClInclude Include="src\bitstring.hpp" />
     <ClInclude Include="src\clock.hpp" />
     <ClInclude Include="src\constant.hpp" />
-    <ClInclude Include="src\error management.hpp" />
-    <ClInclude Include="src\execution.hpp" />
     <ClInclude Include="src\function.hpp" />
     <ClInclude Include="src\f_pointer.hpp" />
     <ClInclude Include="src\printer.hpp" />

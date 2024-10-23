@@ -14,33 +14,4 @@ void print_available_functions()
 		<< "3. schwefel\n\n";
 }
 
-
-//------------------------------------------------
-// classes:
-
-class printer
-{
-public:
-	~printer() = default;
-	printer() = default;
-	printer(const char*);
-};
-
-class proposition : public printer
-{
-public:
-	proposition() = delete;
-	proposition(const char*);
-};
-
-class file_printer : public printer
-{
-	//std::ofstream file;
-
-public:
-	// constructors:
-	file_printer() = delete;
-	file_printer(const char*);
-};
-
 #endif

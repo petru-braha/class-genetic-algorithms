@@ -1,0 +1,71 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\PETRU\\Desktop\\ga\\homework\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{439F09BC-0524-452E-A98A-03A994EEA017}|h1\\h1.vcxproj|C:\\Users\\PETRU\\Desktop\\ga\\homework\\h1\\h1.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{439F09BC-0524-452E-A98A-03A994EEA017}|h1\\h1.vcxproj|solutionrelative:h1\\h1.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{439F09BC-0524-452E-A98A-03A994EEA017}|h1\\h1.vcxproj|C:\\Users\\PETRU\\Desktop\\ga\\homework\\h1\\src\\execution.hpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{439F09BC-0524-452E-A98A-03A994EEA017}|h1\\h1.vcxproj|solutionrelative:h1\\src\\execution.hpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{439F09BC-0524-452E-A98A-03A994EEA017}|h1\\h1.vcxproj|C:\\Users\\PETRU\\Desktop\\ga\\homework\\h1\\src\\value.hpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{439F09BC-0524-452E-A98A-03A994EEA017}|h1\\h1.vcxproj|solutionrelative:h1\\src\\value.hpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 2,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "execution.hpp",
+              "DocumentMoniker": "C:\\Users\\PETRU\\Desktop\\ga\\homework\\h1\\src\\execution.hpp",
+              "RelativeDocumentMoniker": "h1\\src\\execution.hpp",
+              "ToolTip": "C:\\Users\\PETRU\\Desktop\\ga\\homework\\h1\\src\\execution.hpp",
+              "RelativeToolTip": "h1\\src\\execution.hpp",
+              "ViewState": "AgIAAFcAAAAAAAAAAAAmwGwAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-10-15T14:25:58.742Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "value.hpp",
+              "DocumentMoniker": "C:\\Users\\PETRU\\Desktop\\ga\\homework\\h1\\src\\value.hpp",
+              "RelativeDocumentMoniker": "h1\\src\\value.hpp",
+              "ToolTip": "C:\\Users\\PETRU\\Desktop\\ga\\homework\\h1\\src\\value.hpp",
+              "RelativeToolTip": "h1\\src\\value.hpp",
+              "ViewState": "AgIAAAoAAAAAAAAAAAAAAF0AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-10-15T13:17:47.823Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "h1.cpp",
+              "DocumentMoniker": "C:\\Users\\PETRU\\Desktop\\ga\\homework\\h1\\h1.cpp",
+              "RelativeDocumentMoniker": "h1\\h1.cpp",
+              "ToolTip": "C:\\Users\\PETRU\\Desktop\\ga\\homework\\h1\\h1.cpp",
+              "RelativeToolTip": "h1\\h1.cpp",
+              "ViewState": "AgIAABkAAAAAAAAAAAAAACoAAAATAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-10-15T11:33:11.678Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -35,7 +35,7 @@ static outcome iterated_hillclimbing(const function& f, unsigned char dimension,
     for (unsigned int i = 0; i < N; i++)
     {
         double canditate = f.run(dimension); // vc
-        while (double temp = improve(neigborhood(canditate), improvement_type) != canditate)
+        while (double temp = improve(neigborhood(canditate), improvement_type) < canditate)
             canditate = temp;
 
         if (canditate > local_minimum)
@@ -155,7 +155,7 @@ static double improve(const std::vector<double>& hood, improvement improvement_t
     if (improvement::best == improvement_type)
     {
         for (const double& value : hood)
-            if (value > original)
+            if (value < original)
                 original = value;
 
         return original;
@@ -164,7 +164,7 @@ static double improve(const std::vector<double>& hood, improvement improvement_t
     if (improvement::first == improvement_type)
     {
         for (const double& value : hood)
-            if (value > original)
+            if (value < original)
             {
                 original = value;
                 break;
@@ -177,14 +177,14 @@ static double improve(const std::vector<double>& hood, improvement improvement_t
     bool first_execution = true;
     double better_value = original;
     for (const double& value : hood)
-        if (value > original)
+        if (value < original)
         {
             if (first_execution)
             {
                 better_value = value;
                 first_execution = false;
             }
-            else if (value < better_value)
+            else if (value > better_value)
                 better_value = value;
         }
 
@@ -215,7 +215,6 @@ static void analysis(const function& f, unsigned char dimension, improvement imp
     std::cout << "improvement.\n\n";
 
     // act
-    
     outcome sample_outcome[SAMPLE_NUMBER];
 
     for (unsigned char index_sample = 0; index_sample < SAMPLE_NUMBER; index_sample++)
