@@ -2,22 +2,41 @@
 #define _0PRINTER0_
 
 #include <iostream>
+#include "function.hpp"
 
 //------------------------------------------------
 // methods:
 
-void print_available_functions()
+void print_analysis_header(const function& f, unsigned char dimension, 
+    improvement improvement_type, std::ostream& out = std::cout)
 {
-	std::cout << "0. de_jong_1\n"
-		<< "1. michalewicz\n"
-		<< "2. rastrigin\n"
-		<< "3. schwefel\n\n";
+    out << "function: id " << f.get_id() << ", ";
+    out << (int)dimension << "-dimensional, using ";
+    switch (improvement_type)
+    {
+    case improvement::best:
+        out << "best ";
+        break;
+    case improvement::first:
+        out << "first ";
+        break;
+    default:
+        out << "worst ";
+        break;
+    }
+
+    out << "improvement.\n\n";
 }
 
+void print_iteration(unsigned int index, std::ostream& out = std::cout)
+{
+    if (0 == index % 100)
+        out << index << "iterations.\n";
+}
 
 //------------------------------------------------
 // classes:
-
+/*
 class printer
 {
 public:
@@ -42,5 +61,6 @@ public:
 	file_printer() = delete;
 	file_printer(const char*);
 };
+*/
 
 #endif

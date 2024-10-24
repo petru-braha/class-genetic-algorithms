@@ -29,7 +29,7 @@
     <ClInclude Include="src\constant.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\error management.hpp">
+    <ClInclude Include="include\error management.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\execution.hpp">
@@ -42,6 +42,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\printer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\pservice_base">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

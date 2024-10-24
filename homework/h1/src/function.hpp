@@ -1,13 +1,13 @@
-#ifndef _0FUNCTION0_
-#define _0FUNCTION0_
+#ifndef _0FUnCTIOn0_
+#define _0FUnCTIOn0_
 
+#include <pservice_base>
 #include "constant.hpp"
-#include "value.hpp"
 
 class function
 {
     // data members
-    unsigned int N, id;
+    unsigned int n, id;
     const double minimum;
     const double maximum;
     fct_ptr f;
@@ -16,13 +16,13 @@ public:
     // constructors:
     ~function() = default;
     function() = delete;
-    function(const double&, const double&, fct_ptr);
+    function(double, double, fct_ptr);
     
     // specific methods:
-    double run(unsigned char) const;
+    double exe(const std::vector<double>&) const;
 
     // constant methods:
-    const unsigned int& get_N() const;
+    const unsigned int& get_n() const;
     const unsigned int& get_id() const;
     const double& get_minimum() const;
     const double& get_maximum() const;
@@ -37,9 +37,8 @@ public:
 
 unsigned int function::unused_id = 0;
 
-
-function::function(const double& min, const double& max, fct_ptr ptr) :
-    N(0), id(unused_id++), minimum(min), maximum(max), f(ptr)
+function::function(double min, double max, fct_ptr ptr) :
+    n(0), id(unused_id++), minimum(min), maximum(max), f(ptr)
 {
     unsigned int power = 10;
     unsigned int precision = PRECISION;
@@ -49,23 +48,23 @@ function::function(const double& min, const double& max, fct_ptr ptr) :
         precision--;
     }
 
-    N = (unsigned int)(maximum - minimum) * power;
+    n = (unsigned int)(maximum - minimum) * power;
 }
 
 //------------------------------------------------
 // specific methods:
 
-double function::run(unsigned char dimension) const
+double function::exe(const std::vector<double>& x) const
 {
-    return f(minimum, maximum, dimension);
+    return f(x);
 }
 
 //------------------------------------------------
 // constant methods:
 
-const unsigned int& function::get_N() const
+const unsigned int& function::get_n() const
 {
-    return N;
+    return n;
 }
 
 const unsigned int& function::get_id() const

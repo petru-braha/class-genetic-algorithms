@@ -1,72 +1,31 @@
-/*
-// additional methods - hillclimbing
-static std::vector<double> neigborhood(const double& number);
-static double improve(const std::vector<double>& hood, improvement improvement_type);
+#ifndef _0EXECTION0_
+#define _0EXECTION0_
 
-// heuristic algorithm
-static outcome iterated_hillclimbing(const function& f, unsigned char dimension, improvement improvement_type)
+#include <vector>
+#include "printer.hpp"
+
+#include "constant.hpp"
+#include "bitstring.hpp"
+#include "function.hpp"
+
+struct local_outcome
 {
-    // start clock and act
-    time_measurement clock;
-    double local_minimum = 0.0;
+    double minimum;
+    long long time_measurement;
+};
 
-    unsigned int N = f.get_N();
-    for (unsigned int i = 0; i < N; i++)
+bool improve(bitstring& candidate, improvement improvement_type)
+{
+    // compute the neigbohood
+    for (size_t i = 0; i < candidate.size(); i++)
     {
-        double canditate = f.run(dimension); // vc
-        while (double temp = improve(neigborhood(canditate), improvement_type) < canditate)
-            canditate = temp;
-
-        if (canditate > local_minimum)
-            local_minimum = canditate;
-
-        // UX
-        if (0 == i % 100)
-            std::cout << i << "iterations.\n";
+        // negation
+        
+        // code
+        
+        // negation
     }
-
-    // stop clock
-    long long milliseconds = clock.stop(time_unit::millisecond);
-    if (0 == milliseconds); // error
-
-    return { local_minimum, milliseconds };
-}
-
-// execution parsing methods
-static void analysis(const function& f, unsigned char dimension, improvement improvement_type);
-static void run(const function& f);
-
-
-
-/*
-
-//------------------------------------------------
-// methods:
-
-static std::vector<double> neigborhood(const double& number)
-{
-    // first == number
-    const bitstring original(number);
-    unsigned char bits_number = original.get_size();
-
-    std::vector<double> hood(bits_number + 1);
-    hood[0] = number;
-
-    for (unsigned char index_bit = 0; index_bit < bits_number; index_bit++)
-    {
-        bitstring copy(original);
-        copy.negation(index_bit);
-
-        double new_number = copy.convert();
-        hood[index_bit + 1] = new_number;
-    }
-
-    return hood;
-}
-
-static double improve(const std::vector<double>& hood, improvement improvement_type)
-{
-    double original = hood.at(0);
+    /*
     if (improvement::best == improvement_type)
     {
         for (const double& value : hood)
@@ -105,56 +64,76 @@ static double improve(const std::vector<double>& hood, improvement improvement_t
 
     original = better_value;
     return original;
+    */
+    return false;
 }
 
-static void analysis(const function& f, unsigned char dimension, improvement improvement_type)
+const std::vector<double>& convert(const function& f,
+    const bitstring& representation)
 {
-    // UX
-    std::cout << "function: id " << f.get_id() << ", ";
-    std::cout << (int)dimension << "-dimensional, using ";
-    switch (improvement_type)
+    const size_t dimension = 1;
+    size_t bits_per_number = representation.size() / dimension;
+
+    //double numbers[dimension];
+    std::vector<double> numbers(dimension);
+    for (size_t index_number = 0; index_number < dimension; index_number++)
     {
-    case improvement::best:
-        std::cout << "best ";
-        break;
-    case improvement::first:
-        std::cout << "first ";
-        break;
-    case improvement::worst:
-        std::cout << "worst ";
-        break;
-    default:
-        break;
+        size_t index_frst_bit = bits_per_number * index_number;
+        size_t index_last_bit = bits_per_number * (index_number + 1);
+
+        size_t value = 0;
+        for (size_t index_bit = index_frst_bit; index_bit < index_last_bit; index_bit++)
+        {
+            value *= 2;
+            value += representation[index_bit];
+        }
+
+        double final_value = f.get_minimum();
+        final_value += f.get_minimum() + f.get_maximum() * value / (pow(2, bits_per_number) - 1);
+
+        numbers[index_number] = final_value;
     }
 
-    std::cout << "improvement.\n\n";
-
-    // act
-    outcome sample_outcome[SAMPLE_NUMBER];
-
-    for (unsigned char index_sample = 0; index_sample < SAMPLE_NUMBER; index_sample++)
-        sample_outcome[index_sample] = iterated_hillclimbing(f, dimension, improvement_type);
-
-    // print
-    // for function dimension improvement type
-    // time
-    // best solution
-    // average solution
-    // worst solution
-
-    // UX
-    std::cout << "\n\n";
+    return numbers;
 }
 
-static void run(const function& f)
+local_outcome iterated_hillclimbing(const function& f, 
+    unsigned char dimension, improvement improvement_type)
 {
-    analysis(f, 2, improvement::best);
-    analysis(f, 2, improvement::first);
-    analysis(f, 2, improvement::worst);
+    // start clock and act
+    time_measurement clock;
+    double local_minimum = 0.0;
 
-    analysis(f, 10, improvement::best);
-    analysis(f, 10, improvement::first);
-    analysis(f, 10, improvement::worst);
+    for (unsigned int i = 0; i < ITERATIONS_NUMBER; i++)
+    {
+        bitstring representation(f.get_n());
+        while (improve(representation, improvement_type));
+            
+        double canditate = f.exe(convert(f, representation)); // vc
+
+        if (canditate > local_minimum)
+                local_minimum = canditate;
+        print_iteration(i);
+    }
+
+    // stop clock
+    long long milliseconds = clock.stop(time_unit::millisecond);
+    if (0 == milliseconds); // error
+
+    return { local_minimum, milliseconds };
 }
 
-*/
+struct setting
+{
+    int precision;
+    int dimension;
+    int objective;
+
+
+    //mission m;
+    solution s;
+    improvement i;
+
+};
+
+#endif

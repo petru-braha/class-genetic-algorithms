@@ -2,53 +2,49 @@
 #define _0FUNCTION_POINTER0_
 
 #include <cmath>
+#include <vector>
+
 #include "constant.hpp"
-#include "bitstring.hpp"
 
-// fctptr_ - function pointer
+// fctptr_ == function pointer
 
-double fctptr_dejong1(const double& minimum, const double& maximum, unsigned char n)
+double fctptr_dejong1(const std::vector<double>& x)
 {
     double s = 0;
-    const unsigned char a = 1;
-    bitstring* array_str = new bitstring(N);
-    for(unsigned char i = 0; i < n; i++)
-        s += x[i]*x[i];
+    for(size_t i = 0; i < x.size(); i++)
+        s += x[i] * x[i];
     
     return s;
 }
 
-double fctptr_michalewicz(const double& minimum, const double& maximum, unsigned char n)
+double fctptr_michalewicz(const std::vector<double>& x)
 {
     const int m = 10;
     double s = 0;
-    value x(minimum, maximum, n);
 
-    for(unsigned char i = 0; i < n; i++)
+    for(size_t i = 0; i < x.size(); i++)
         s = s + sin(x[i]) * pow( (sin( i * x[i] * x[i] / PI )), (2 * m));
     
     return -s;
 }
 
-double fctptr_rastrigin(const double& minimum, const double& maximum, unsigned char n)
+double fctptr_rastrigin(const std::vector<double>& x)
 {
     double s = 0.0;
-    value x(minimum, maximum, n);
 
-    for(unsigned char i = 0; i < n; i++)
+    for(unsigned char i = 0; i < x.size(); i++)
         s = s + (x[i]*x[i] - 10*cos(2*PI * x[i]));
 
-    return 10*n + s;
+    return 10 * x.size() + s;
 }
 
-double fctptr_schwefel(const double& minimum, const double& maximum, unsigned char n)
+double fctptr_schwefel(const std::vector<double>& x)
 {
     double s = 0;
-    value x(minimum, maximum, n);
-    for(unsigned char i = 0; i < n; i++)
+    for(unsigned char i = 0; i < x.size(); i++)
         s += (-x[i] * sin(sqrt(abs(x[i]))));
     
-    return s + 418.9829*n;
+    return s + 418.9829 * x.size();
 }
 
 #endif

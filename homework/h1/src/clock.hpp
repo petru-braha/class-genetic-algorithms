@@ -1,6 +1,7 @@
 #ifndef _0CLOCK0_
 #define _0CLOCK0_
 
+#include <pservice_base>
 #include <chrono>
 #include "constant.hpp"
 

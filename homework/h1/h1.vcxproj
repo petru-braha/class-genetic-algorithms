@@ -104,7 +104,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)h1\src\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)h1\include\;$(SolutionDir)h1\src\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -119,7 +119,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)h1\src\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)h1\include\;$(SolutionDir)h1\src\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -132,10 +132,11 @@
     <ClCompile Include="h1.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\pservice_base" />
     <ClInclude Include="src\bitstring.hpp" />
     <ClInclude Include="src\clock.hpp" />
     <ClInclude Include="src\constant.hpp" />
-    <ClInclude Include="src\error management.hpp" />
+    <ClInclude Include="include\error management.hpp" />
     <ClInclude Include="src\execution.hpp" />
     <ClInclude Include="src\function.hpp" />
     <ClInclude Include="src\f_pointer.hpp" />

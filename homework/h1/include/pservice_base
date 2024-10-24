@@ -1,0 +1,13 @@
+#ifndef _0PSERVICE_BASE0_
+#define _0PSERVICE_BASE0_
+
+#define NAMESPACE_END
+
+#define STD_PSERVICE_BEGIN namespace pservice {
+#define STD_PSERVICE_END } NAMESPACE_END
+
+/* comments: 
+* header used to define personal classes
+*/
+
+#endif
