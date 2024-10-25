@@ -2,14 +2,9 @@
 #define _0BITSTRING0_
 
 #include <pservice_base>
-#include <stdlib.h>
-#include <utility>
-#include <thread>
-#include <random>
-#include <time.h> 
-#include "constant.hpp"
-
 #include <vector>
+
+#include "constant.hpp"
 
 /* comments:
 * it don't have to consider here the minimum, maximum and precision
@@ -23,15 +18,13 @@ class bitstring
 public:
     // constructors:
     ~bitstring() = default;
+    bitstring() = delete;
     bitstring(size_t);
-    
-    // specific methods:
-    double convert() const;
-    
-    // specific methods:
-    bool operator [] (size_t) const;
+
+    // constant methods:
+    const bool& operator [] (const size_t index) const;
+    bool& operator [] (const size_t);
     size_t size() const;
-    void  print() const;
 };
 
 //------------------------------------------------
@@ -45,26 +38,21 @@ bitstring::bitstring(size_t n) : bits(n)
 }
 
 //------------------------------------------------
-// constant methods
+// constant methods:
 
-bool bitstring::operator [] (size_t index) const
+const bool& bitstring::operator [] (const size_t index) const
 {
-    if (index >= bits.size()); // error
-        
     return bits[index];
+}
+
+bool& bitstring::operator [] (const size_t index)
+{
+    return (bool&)bits[index];
 }
 
 size_t bitstring::size() const
 {
     return bits.size();
-}
-
-void bitstring::print() const
-{
-    size_t n = bits.size();
-    for (size_t i = 0; i < n; i++)
-        std::cout << bits[i];
-    std::cout << '\n';
 }
 
 #endif

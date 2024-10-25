@@ -2,6 +2,7 @@
 #define _0CONSTANT0_
 
 #include <pservice_base>
+#include <random>
 
 #define ERROR_CODE -1
 
@@ -12,24 +13,20 @@
 #define PRECISION 5
 #define PI 3.14159
 
-enum class objective // not now
+enum class objective_type // not now
 {
     minimum_point, maximum_point
 };
 
-enum class improvement
+enum class improvement_type
 {
     best, first, worst
 };
 
-enum class solution
+enum class solution_type
 {
     best, average, worst
 };
-
-typedef double (*fct_ptr)(const std::vector<double>&);
-typedef unsigned long long int ull;
-typedef double nr;
 
 void normalize(double& number)
 {

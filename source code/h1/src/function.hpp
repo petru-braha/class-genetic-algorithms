@@ -6,7 +6,11 @@
 
 class function
 {
-    // data members
+    // typedefs:
+    typedef double (*fct_ptr)(const double* const numbers,
+        const size_t dimension);
+    
+    // data members:
     unsigned int n, id;
     const double minimum;
     const double maximum;
@@ -19,7 +23,7 @@ public:
     function(double, double, fct_ptr);
     
     // specific methods:
-    double exe(const std::vector<double>&) const;
+    double exe(const double* const, const size_t) const;
 
     // constant methods:
     const unsigned int& get_n() const;
@@ -54,9 +58,10 @@ function::function(double min, double max, fct_ptr ptr) :
 //------------------------------------------------
 // specific methods:
 
-double function::exe(const std::vector<double>& x) const
+double function::exe(const double* const numbers, 
+    const size_t dimension) const
 {
-    return f(x);
+    return f(numbers, dimension);
 }
 
 //------------------------------------------------

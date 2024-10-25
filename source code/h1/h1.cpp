@@ -3,8 +3,7 @@
 #include <thread>
 #include <vector>
 
-#include <random>
-#include <cmath>
+#include "setting.hpp"
 #include "clock.hpp"
 #include "printer.hpp"
 
@@ -16,7 +15,7 @@
 
 //using namespace pservice;
 
-static void analysis(const function&, unsigned char, improvement);
+static void analysis(const function&, unsigned char, improvement_type);
 static void run(const function&);
 
 //------------------------------------------------
@@ -26,6 +25,8 @@ int main()
 {
     std::cout << "h1 program starts running.\n\n";
     srand((unsigned int)time(0));
+    setting::objective = objective_type::minimum_point;
+    setting::precision = PRECISION;
 
     const function de_jong_1(-5.12, 5.12, fctptr_dejong1); 
     const function michalewicz(0, PI, fctptr_michalewicz);
@@ -39,15 +40,18 @@ int main()
     run(rastrigin);
     run(schwefel);
 
-    std::cout << "the program ran for " << clock.stop(time_unit::second) << " seconds.\n";
+    std::cout << "the program ran for " 
+        << clock.stop(time_unit::second) << " seconds.\n";
     return EXIT_SUCCESS;
 }
 
-void print_analysis_header(const function&, unsigned char, improvement, std::ostream&);
-static void analysis(const function& f, unsigned char dimension, improvement improvement_type)
+void print_analysis_header(const function&, unsigned char, 
+    improvement_type, std::ostream&);
+static void analysis(const function& f, unsigned char dimension, 
+    improvement_type imrpv)
 {
     // ux
-    print_analysis_header(f, dimension, improvement_type);
+    print_analysis_header(f, dimension, imrpv);
     
     // act
     local_outcome sample_outcome[SAMPLE_NUMBER];
@@ -64,9 +68,9 @@ static void analysis(const function& f, unsigned char dimension, improvement imp
 
 static void run(const function& f)
 {
-    analysis(f, 30, improvement::best);
-    analysis(f, 30, improvement::first);
-    analysis(f, 30, improvement::worst);
+    analysis(f, 30, improvement_type::best);
+    analysis(f, 30, improvement_type::first);
+    analysis(f, 30, improvement_type::worst);
 }
 
 // for(iteration) 
