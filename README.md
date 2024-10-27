@@ -1,14 +1,11 @@
 # Genetic algoritms:
 
-- each project has source code, a raport and documentation
+- each project has source code and a raport
 
-
-## h0 - HillClimbing algorithm
-
-- source code available for preview
-- results are in progress
-
-## h1 - Simulated Anneling algorithm
+## h1 
+- algorithms:
+	- Hill Climbing 
+	- Simulated annealing
 
 ## h2
 
