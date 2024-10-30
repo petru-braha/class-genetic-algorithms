@@ -1,6 +1,7 @@
 #ifndef _0EXECTION0_
 #define _0EXECTION0_
 
+#include <limits>
 #include <vector>
 #include "printer.hpp"
 
@@ -8,17 +9,13 @@
 #include "bitstring.hpp"
 #include "function.hpp"
 
-struct local_outcome
-{
-    double minimum;
-    long long time_measurement;
-};
+#include "local_outcome.hpp"
 
 double* convert(const bitstring& b, const function& f, size_t dimension)
 {
     size_t bits_per_number = b.size() / dimension;
 
-    double* numbers = new double[dimension];
+    double* numbers = new double[dimension] {};
     for (size_t index_number = 0; index_number < dimension; index_number++)
     {
         size_t index_frst_bit = bits_per_number * index_number;
@@ -32,7 +29,7 @@ double* convert(const bitstring& b, const function& f, size_t dimension)
         }
 
         double final_value = f.get_minimum();
-        final_value += f.get_minimum() + f.get_maximum() * value / (pow(2, bits_per_number) - 1);
+        final_value += value * (f.get_maximum() - f.get_minimum()) / (pow(2, bits_per_number) - 1);
 
         numbers[index_number] = final_value;
     }
@@ -40,104 +37,71 @@ double* convert(const bitstring& b, const function& f, size_t dimension)
     return numbers;
 }
 
-bool improve(const function& f, unsigned char dimension, 
-    improvement_type imprv, bitstring& candidate)
+bool improve(bitstring& candidate, const function& f, 
+    improvement_type imprv, size_t dimension)
 {
     double* numbers = convert(candidate, f, dimension);
     double value_current = f.exe(numbers, dimension);
     delete[]numbers;
-    
-    // compute neighborhood
-    switch (imprv)
+
+    double value_imprv = value_current;
+    long long index_bit = -1;
+
+    for (size_t i = 0; i < candidate.size(); i++)
     {
-    case improvement_type::best:
-        double value_best_imprv = value_current;
-        size_t index_bit = 0;
-        
-        for (size_t i = 0; i < candidate.size(); i++)
+        candidate[i] = !candidate[i];
+
+        numbers = convert(candidate, f, dimension);
+        double value_neighborhood = f.exe(numbers, dimension);
+        delete[]numbers;
+
+        if (setting::is_better(value_current, value_neighborhood))
         {
-            candidate[i] = !candidate[i];
+            index_bit = i;
 
-            numbers = convert(candidate, f, dimension);
-            double value_neighborhood = f.exe(numbers, dimension);
-            delete[]numbers;
-
-            if (setting::change(value_best_imprv, value_neighborhood))
-                index_bit = i;
-
-            candidate[i] = !candidate[i];
-        }
-
-        if (value_best_imprv != value_current)
-        {
-            b[index_bit] = !b[index_bit];
-            return true;
-        }
-
-        break;
-
-    case improvement_type::first:
-        for (size_t i = 0; i < candidate.size(); i++)
-        {
-            candidate[i] = !candidate[i];
-
-            numbers = convert(candidate, f, dimension);
-            double value_neighborhood = f.exe(numbers, dimension);
-            delete[]numbers;
-
-            if (setting::change(value_best_imprv, value_neighborhood))
+            switch (imprv)
+            {
+            case improvement_type::best:
+                if (value_neighborhood > value_imprv)
+                    value_imprv = value_neighborhood;
+                break;
+            case improvement_type::worst:
+                if(value_imprv == value_current || 
+                    value_neighborhood < value_imprv)
+                    value_imprv = value_neighborhood;
+                break;
+            default: // first
                 return true;
-
-            candidate[i] = !candidate[i];
+            }
         }
 
-        break;
+        candidate[i] = !candidate[i];
+    }
 
-    case improvement_type::worst:
-        double value_wrst_imprv = value_current;
-        size_t index_bit = 0;
-        
-        for (size_t i = 0; i < candidate.size(); i++)
-        {
-            candidate[i] = !candidate[i];
-
-            numbers = convert(candidate, f, dimension);
-            double value_neighborhood = f.exe(numbers, dimension);
-            delete[]numbers;
-
-            if (setting::change(value_best_imprv, value_neighborhood))
-                index_bit = i;
-
-            candidate[i] = !candidate[i];
-        }
-
-        if (value_best_imprv != value_current)
-        {
-            b[index_bit] = !b[index_bit];
-            return true;
-        }
-
-        break;
-
-    default:
-        break;
+    if (value_imprv != value_current)
+    {
+        candidate[index_bit] = !candidate[index_bit];
+        return true;
     }
 
     return false;
 }
 
 local_outcome iterated_hillclimbing(const function& f, 
-    unsigned char dimension, improvement_type imprv)
+    improvement_type imprv, size_t dimension)
 {
     // start clock and act
     time_measurement clock;
-    double local_minimum = 0;
+    double local_minimum = std::numeric_limits<double>::infinity();
+    if (setting::objective == objective_type::maximum_point)
+        local_minimum *= -1;
 
-    for (unsigned int i = 0; i < ITERATIONS_NUMBER; i++)
+    for (size_t i = 0; i < ITERATIONS_NUMBER; i++)
     {
+        std::cout << i << ' ';
         // improve
         bitstring representation(f.get_n());
-        while (improve(f, dimension, imprv, representation));
+        while (improve(representation, f, imprv, dimension));
 
         // vc
         double* numbers = convert(representation, f, dimension);
@@ -145,8 +109,8 @@ local_outcome iterated_hillclimbing(const function& f,
         delete[]numbers;
 
         // update
-        if (value_candidate > local_minimum)
-                local_minimum = value_candidate;
+        if (setting::is_better(local_minimum, value_candidate))
+            local_minimum = value_candidate;
         print_iteration(i);
     }
 

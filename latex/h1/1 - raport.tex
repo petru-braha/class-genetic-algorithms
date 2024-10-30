@@ -20,8 +20,8 @@
 
 \pgfplotsset{compat=1.18}
 
-\title{H1 – Testing standard benchmark functions \\ Hill-Climbing and Simulated annealing}
-\author{Dinca Georgian(2E2) - Brahă Petru(2E3)}
+\title{H1 – Testing Hill-Climbing and Simulated annealing \\ on numerical benchmark functions}
+\author{Dincă Georgian(2E2) - Brahă Petru(2E3)}
 \date{October 29, 2024}
 
 %%------------------------------------------------
@@ -31,20 +31,22 @@
 
 \maketitle
 
-\section{Abstract}
+\input{abstract}
+% similiar to this there is \include but i need more research on this topic
 
-\subparagraph{}
-This research document contains a comparative analysis of local search strategies applied to four optimization benchmark functions: \textbf{Sphere}, \textbf{Rastrigin}, \textbf{Schwefel} and \textbf{Michalewicz}. Three search strategies are evaluated - \textit{\textbf{Best Improvement}}, \textit{\textbf{First Improvement}}, and \textit{\textbf{Simulated annealing}} - across the following problem dimensions (\textbf{10D}, \textbf{30D}, and \textbf{100D}), with an additional investigation of \textit{\textbf{Worst Improvement}} approach for the lower-dimensional cases (\textbf{10D} and \textbf{30D}). In addition to solution quality, the execution times of each strategy were recorded and compared. Results and findings from these experiments are presented and discussed. 
+\section{Introduction}
 
-\section{Motivation}
+spam here
+
+\subsection{Motivation}
 
 \subparagraph{}
 The program's target is to find the smallest optimum for the functions mentioned. What could be an obstacle?
 
 \subparagraph{}
-Achieving ideal outcomes using a deterministic design inflicts some disadvantages. Its performace does not hold when faced with multiple local optimum points and complex landscapes. Studying the global optima over an interval shapes the following problem: the infinite amount of real values in the interval. How is it supposed to analyse such a scenario? Of course there exists several exponential procedures, but the overall context is not attainable. In the previous paper we argued that this kind of algorithm (a deterministic one) is time-consuming and not fesable in practice. By contrast the concepts of heuristics were also visited. The cues capured guided us to examine the standard functions by changing the definition of a solution: the perfect result is not necessary, and a close call to it in a much quicker way is preferred. Time cost can be notably reduced without dramatically sacrificing the quality of the output. We nominate that the quality is satisfactory in the following implementation. \\
+Achieving ideal outcomes using a deterministic design inflicts some disadvantages. Its performance does not hold when faced with multiple local optimum points and complex landscapes. Studying the global optima over an interval shapes the following problem: the infinite amount of real values in the interval. How is it supposed to analyze such a scenario? Of course, there exist several exponential procedures, but the overall context is not attainable. In the previous paper, we argued that this kind of algorithm (a deterministic one) is time-consuming and not feasible in practice. By contrast, the concepts of heuristics were also visited. The cues captured guided us to examine the standard functions by changing the definition of a solution: the perfect result is not necessary, and a close call to it in a much quicker way is preferred. Time costs can be notably reduced without dramatically sacrificing the quality of the output. We nominate that the quality is satisfactory in the following implementation. \\
 
-Note: Five floating points were considered as precision for the findings of this experiment.
+Note: The precision chosen for the outputs for the findings of this experiment.
 
 %%------------------------------------------------
 %% explanations:
@@ -54,10 +56,10 @@ Note: Five floating points were considered as precision for the findings of this
 \subsection{Setup}
 
 \subparagraph{}
-The algorithms have been implemented to leverage GPU acceleration by using NVIDIA's CUDA framework. The system used to run the tests was equipped with an RTX 4090 graphics card, mobile version. The parallel nature of local search algorithms, where multiple independent search iterations can be executed simultaneously, makes them particularly well-suited for GPU implementation due to their architecture having very large number of cores and threads that can run in parallel. Each search iteration operates independently on its own thread, which parallelizes the workload efficiently.
+The algorithms have been implemented to leverage GPU acceleration using NVIDIA's CUDA framework. The system used to run the tests was equipped with an RTX 4090 graphics card, mobile version. The parallel nature of local search algorithms, where multiple independent search iterations can be executed simultaneously, makes them particularly well-suited for GPU implementation due to their architecture having a huge number of cores and threads that can run in parallel. Each search iteration operates independently on its own thread, which parallelizes the workload efficiently.
 
 \subparagraph{}
-Our GPU implementation utilizes a thread organization scheme of 32 threads per block, aligning with the NVIDIA warp size for optimal execution efficiency. This configuration minimizes thread divergence and maximizes memory coalescing \cite{cuda}, resulting in improved computational performance. Each experimental configuration executes 20,000 iterations per sample, with 30 independent samples for statistical robustness.
+Our GPU implementation utilizes a thread organization scheme of 32 threads per block, aligning with the NVIDIA warp size for optimal execution efficiency. This configuration minimizes thread divergence and maximizes memory coalescing, concluding in improved computational performance. Each experimental configuration executes 20,000 iterations per sample, with 30 independent samples for statistical robustness.
 
 \subparagraph{}
 To attempt function evaluation, we employed two popular optimization algorithms: Hill Climbing and Simulated annealing (hybridization of HC best improvement); both are covered in the next subsections.
@@ -65,24 +67,25 @@ To attempt function evaluation, we employed two popular optimization algorithms:
 \subsection{Hill Climbing implementation}
 
 \subparagraph{}
-The algorithm manipulates the vast search interval of the function in an unique way. First of all it calculates N, a precise number of random candidate numbers inside the domain, using the formula: $ N = (b-a)*10^p$,  where $a$ and $b$ are lower/upper bounds of the function in question, and $p$ being the established precision. The magic begins with the representation of these N values: bit strings. The random number generation is, in fact, a random bit generator; we used NVIDIA's pseudo-random number generator algorithm. Constructing a bit string requires as input the maximum length, which was calculated using $log2(N) + 1$. Its conversion process is ironed out by the following fitness function: $$fitness = a + decimal(bitstring) * (b - a) / (2^N - 1) .$$
+The algorithm manipulates the vast search interval of the function uniquely. First of all, it calculates N, a precise cardinal of random candidate numbers inside the domain, using the formula: $ N = (b-a)*10^p$,  where $a$ and $b$ are lower/upper bounds of the interval in question, and $p$ being the established precision. The magic begins with the representation of these N values: as bit strings. The random number generation is, in fact, a random bit generator; we used NVIDIA's pseudo-random number generator algorithm. Constructing a bit string requires as input the maximum length, which was calculated using $log2(N) + 1$. Its conversion process is ironed out by the following fitness function: $$fitness(bitstring) = a + decimal(bitstring) * (b - a) / (2^N - 1) .$$
 
 \subparagraph{}
-The primary goal is to identify a peak solution by continually moving towards neighboring solutions with higher fitness outcomes. A neighbor of a bit string is a copy of the current representation, but with only one flipped bit. In other words, for every bit there is associated a neighbor; this can be understood as a iteration of the string. Depending on the improvement type, a potential more desirable neighbor is assigned to the candidate variable. For only one run of the algorithm, improvements are performed until there is no better value in the neighborhood - the end condition. The real values are then computed and the result of the benchmark functions with respect to these computations is returned.
+The primary goal is to identify a peak solution by continually moving towards neighboring solutions with higher fitness outcomes. A neighbor of a bit string is a copy of the current representation but with only one flipped bit. In other words, for every bit there is associated with a neighbor; this can be understood as an iteration of the string. Depending on the improvement type, a potentially more desirable neighbor is assigned to the candidate variable. For only one run of the algorithm, improvements are performed until there is no better value in the neighborhood - the end condition. The real values are then computed and the result of the benchmark functions concerning these computations is returned.
 
 \subsection{Simulated annealing implementation}
 
 \subparagraph{}
-Our implementation features a hybrid approach that combines traditional SA with a Best Improvement local search phase after the temperature drops and it can no longer escape the local optimum. The initial temperature $T_0$ is dynamically calculated based on the dimension number using the formula $T_0 = \left|\frac{cost*n}{\ln(0.8)}\right|$, where $n$ is the number of dimensions. The $cost$ is the approximative maximum value of the function for one dimension and assures that the temperature can be high enough for exploration. This number is specific for each function (except for Sphere's - the exploration works for any $ x \in \mathbb{N}$):
+Our implementation features a hybrid approach that combines traditional SA with a Best Improvement local search phase after the temperature drops and it can no longer escape the local optimum. The initial temperature $T_0$ is dynamically calculated based on the dimension number using the formula $T_0 = \left|\frac{fmax*n}{\ln(0.8)}\right|$, where $n$ is the number of dimensions. $fmax$ is the aproximative maximum value of the function for one dimension and assures that the temperature can be high enough for exploration:
 \begin{itemize} 
-    \item 40 - Rastrigin's 
-    \item 840 -  Schwefel's 
-    \item 2 - Michalewicz's 
+    \item Sphere's is very simple and doesn't need optimized temperature initialization
+    \item Rastrigin's - 40 
+    \item Schwefel's - 840 
+    \item Michalewicz's - 2 
 \end{itemize} 
 This adaptive initial temperature ensures appropriate scaling of the acceptance probability across different problem dimensions. 
 
 \subparagraph{}
-The cooling schedule is implemented with a geometric decay and a cooling rate of 0.985, maintaining a balance between exploration and exploitation. The algorithm progresses until either the temperature falls below a threshold of $T_0\times10^{-8}$, or when the search stagnates for 4 consecutive temperature changes. For each temperature, we attempt to achieve 20n successful moves, where n is the number of dimensions, with a maximum of 200n total attempts per temperature to prevent excessive computation in flat regions of the search space. 
+The cooling schedule is implemented with a geometric decay and a cooling rate of 0.985, maintaining a balance between exploration and exploitation. The algorithm progresses until either the temperature falls below a threshold of $T_0\times10^{-8}$, or when the search stagnates for four consecutive temperature changes. For each temperature, we attempt to achieve $20*n$ successful moves, where n is the number of dimensions, with a maximum of $200*n$ total attempts per temperature to prevent excessive computation in flat regions of the search space. 
 
 \subparagraph{}
 The solution representation uses a binary encoding, with neighborhood moves implemented as single bit-flips. Move acceptance follows the standard Metropolis criterion:
@@ -90,11 +93,6 @@ The solution representation uses a binary encoding, with neighborhood moves impl
     \item Improvements are always accepted
     \item Deteriorating moves are accepted with probability $\exp\left(-\frac{| \Delta f |}{T}\right)$, where $\Delta f$ is the absolute fitness difference and T is the current temperature
 \end{itemize}
-
-\subsection{Interpretation}
-
-\subparagraph{}
-The experimental results demonstrate that \textit{\textbf{Best Improvement}} consistently outperforms \textit{\textbf{First Improvement}} in solution quality across all test functions, particularly in higher dimensions, however at a higher computational cost. \textit{\textbf{Simulated annealing}} exhibits superior performance by escaping local optima, especially notable for \textbf{Rastrigin} and \textbf{Schwefel} functions, yielding better results when compared against \textit{\textbf{Best Improvement}}. Finally, \textit{\textbf{Worst Improvement}} showed inferior results at a higher computational cost than all other strategies.
 
 %%------------------------------------------------
 %% end of presentation:
@@ -445,6 +443,11 @@ $$f(\mathbf{x}) = -\sum_{i=1}^{n} \sin(x_i) \cdot \left(\sin\left(ix_i^2 / \pi\r
 
 %%------------------------------------------------
 
+\subsection{Interpretation}
+
+\subparagraph{}
+The experimental results demonstrate that \textit{\textbf{Best Improvement}} consistently outperforms \textit{\textbf{First Improvement}} in solution quality across all test functions, particularly in higher dimensions, however at a higher computational cost. \textit{\textbf{Simulated annealing}} exhibits superior performance by escaping local optima, especially notable for \textbf{Rastrigin} and \textbf{Schwefel} functions, yielding better outputs when compared against \textit{\textbf{Best Improvement}}. Finally, \textit{\textbf{Worst Improvement}} showed inferior results at a higher computational cost than all other strategies.
+
 \section{Conclusions}
 
 \subparagraph{}
@@ -460,7 +463,7 @@ Overall, this study provides valuable insights into the application of optimizat
 \begin{thebibliography}{9}
 
 \bibitem{course}
-  Croitoru Eugen - course \\ Hill Climbing documentation.
+  Course page \\ Hill Climbing documentation.
   \url{https://profs.info.uaic.ro/eugen.croitoru/teaching/ga/}
 
 \bibitem{cuda}
@@ -483,6 +486,15 @@ Overall, this study provides valuable insights into the application of optimizat
   Simon Fraser University \\ Michalewicz's function.
   \url{https://www.sfu.ca/~ssurjano/michal.html}
 
+\bibitem{l}
+  Overleaf \\ LaTeX training.
+  \url{https://tex.stackexchange.com/questions/39017/how-to-influence-the-position-of-float-environments-like-figure-and-table-in-lat/39020#39020} \\
+  \url{https://latex-cookbook.net/function-plot/%7D} \\  
+  \url{https://www.overleaf.com/learn/latex/Learn_LaTeX_in_30_minutes%7D}
+
+%[8] Adding mathematical symbols in LaTeX:\\\href{https://oeis.org/wiki/List_of_LaTeX_mathematical_symbols}{https://oeis.org/wiki/List\_of\_LaTeX\_mathematical\_symbols}\\
+%[9] Adding images and shapes in LaTeX:\\\href{https://stackoverflow.com/questions/3134187/}{https://stackoverflow.com/questions/3134187/}\\how-to-add-a-jpg-image-in-latex\\[8] Adding mathematical symbols in LaTeX:\\
+%[9] Adding images and shapes in LaTeX:\\\href{https://stackoverflow.com/questions/3134187/}{https://stackoverflow.com/questions/3134187/}\\how-to-add-a-jpg-image-in-latex\\
 
 \end{thebibliography}  
 \end{document}

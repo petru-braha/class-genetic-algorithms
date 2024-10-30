@@ -13,9 +13,13 @@
 #include "f_pointer.hpp"
 #include "execution.hpp"
 
-//using namespace pservice;
+#include "t_infinity.hpp"
+#include "t_printer.hpp"
 
-static void analysis(const function&, unsigned char, improvement_type);
+//using namespace pservice;
+#pragma warning (disable :4996)
+
+static void analysis(const function&, improvement_type, size_t);
 static void run(const function&);
 
 //------------------------------------------------
@@ -36,45 +40,39 @@ int main()
     time_measurement clock;
 
     run(de_jong_1);
-    run(michalewicz);
-    run(rastrigin);
-    run(schwefel);
+    //run(michalewicz);
+    //run(rastrigin);
+    //run(schwefel);
 
     std::cout << "the program ran for " 
         << clock.stop(time_unit::second) << " seconds.\n";
     return EXIT_SUCCESS;
 }
 
-void print_analysis_header(const function&, unsigned char, 
-    improvement_type, std::ostream&);
-static void analysis(const function& f, unsigned char dimension, 
-    improvement_type imrpv)
+void print_analysis_header(const function&, improvement_type, 
+    size_t, std::ostream&);
+static void analysis(const function& f, improvement_type imprv, size_t dimension)
 {
     // ux
-    print_analysis_header(f, dimension, imrpv);
+    print_analysis_header(f, imprv, dimension);
     
     // act
     local_outcome sample_outcome[SAMPLE_NUMBER];
+    for (unsigned char index_sample = 0; index_sample < SAMPLE_NUMBER; index_sample++)
+        sample_outcome[index_sample] = iterated_hillclimbing(f, imprv, dimension);
 
-    //for (unsigned char index_sample = 0; index_sample < SAMPLE_NUMBER; index_sample++)
-        //sample_local_outcome[index_sample] = iterated_hillclimbing(f, dimension, improvement_type);
-
-    // print to ../output/primitive results
-    // file per function
-    // chapter per dimension
-    // bullet points for each improvement type and time
-    // solution analysis is done using r
+    // print acts
+    printer file(f, imprv, dimension);
+    for (unsigned char index_sample = 0; index_sample < SAMPLE_NUMBER; index_sample++)
+        file << sample_outcome[index_sample];
 }
 
 static void run(const function& f)
 {
-    analysis(f, 30, improvement_type::best);
-    analysis(f, 30, improvement_type::first);
-    analysis(f, 30, improvement_type::worst);
+    size_t d = 2; // 30
+    analysis(f, improvement_type::best, d);
+    //analysis(f, improvement_type::first, d);
+    //analysis(f, d, improvement_type::worst);
 }
 
-// for(iteration) 
-    // generate a bitstring
-    // divide it by the number of dimensions
-    // compute function of bitstring
-    // compute function of neigborhood
+// how much time did it took for the all iterations of a single sample

@@ -44,7 +44,7 @@ unsigned int function::unused_id = 0;
 function::function(double min, double max, fct_ptr ptr) :
     n(0), id(unused_id++), minimum(min), maximum(max), f(ptr)
 {
-    unsigned int power = 10;
+    unsigned int power = 1;
     unsigned int precision = PRECISION;
     while(precision)
     {
@@ -52,7 +52,9 @@ function::function(double min, double max, fct_ptr ptr) :
         precision--;
     }
 
-    n = (unsigned int)(maximum - minimum) * power;
+    n = (unsigned int)((maximum - minimum) * power);
+    n = ceil(log2(n));
+    precision += 1;
 }
 
 //------------------------------------------------

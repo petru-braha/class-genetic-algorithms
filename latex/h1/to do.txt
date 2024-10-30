@@ -1,0 +1,43 @@
+
+0.	de ce am gasit diferit pentru schwefel?
+a.	http://www.geatbx.com/docu/fcnindex-01.html#P150_6749 
+b.	https://www.sfu.ca/~ssurjano/schwef.html
+
+Summary in abstract of the results
+
+Abstract – 6 
+
+Introduction – functions, methods, results, categorizing, temperature, simulated annealing
+Write introduction – explains your paper
+Explain your paper, experiments, data, result
+Motativation – lab work at GA
+
+Method: Hardware, Software, Algo, Talk about How did you fine tune
+
+\ c dot for multiplication
+\times – cartisian product
+Talk about How did you fine tune
+\cite metropolis 
+
+Interpretation after result \ subsection of the results
+After each table interpretation
+
+Mla citing technique
+\bibitem{l}
+  Overleaf \\ LaTeX training.
+  \url{https://tex.stackexchange.com/questions/39017/how-to-influence-the-position-of-float-environments-like-figure-and-table-in-lat/39020#39020} \\
+  \url{https://latex-cookbook.net/function-plot/} \\  \url{https://www.overleaf.com/learn/latex/Learn_LaTeX_in_30_minutes}
+
+Poor results for 20 000
+
+
+This vs genetic algo z
+
+
+pgplot gnuplot
+
+for me:
+* restrictions
+* add lying values for michalewicz 100D first improvement
+* r compute standard deviation
+* de ce pentru dimensiuni mai mari valorile cresc?
