@@ -1,7 +1,10 @@
 #ifndef _0SETTING0_
 #define _0SETTING0_
 
+#include <pservice_base>
 #include "constant.hpp"
+
+STD_PSERVICE_BEGIN
 
 struct setting
 {
@@ -26,4 +29,5 @@ struct setting
 objective_type setting::objective = objective_type::minimum_point;
 int setting::precision = 0;
 
+STD_PSERVICE_END
 #endif

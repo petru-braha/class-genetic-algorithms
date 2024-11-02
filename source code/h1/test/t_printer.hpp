@@ -8,6 +8,8 @@
 
 #include "local_outcome.hpp"
 
+using namespace pservice;
+
 void t_printer()
 {
 	const function de_jong_1(-5.12, 5.12, fctptr_dejong1);

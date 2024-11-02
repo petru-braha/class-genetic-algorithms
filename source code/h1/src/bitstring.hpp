@@ -4,12 +4,15 @@
 #include <pservice_base>
 #include <vector>
 
+#include "generator.hpp"
 #include "constant.hpp"
 
 /* comments:
 * it don't have to consider here the minimum, maximum and precision
 * it's a task for the developer from future
 */
+
+STD_PSERVICE_BEGIN
 
 class bitstring
 {
@@ -22,7 +25,7 @@ public:
     bitstring(size_t);
 
     // constant methods:
-    const bool& operator [] (const size_t index) const;
+    bool operator [] (const size_t index) const;
     bool& operator [] (const size_t);
     size_t size() const;
 };
@@ -40,7 +43,7 @@ bitstring::bitstring(size_t n) : bits(n)
 //------------------------------------------------
 // constant methods:
 
-const bool& bitstring::operator [] (const size_t index) const
+bool bitstring::operator [] (const size_t index) const
 {
     return bits[index];
 }
@@ -55,4 +58,5 @@ size_t bitstring::size() const
     return bits.size();
 }
 
+STD_PSERVICE_END
 #endif

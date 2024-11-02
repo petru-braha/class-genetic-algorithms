@@ -134,19 +134,24 @@
     <ClCompile Include="h1.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\call.hpp" />
     <ClInclude Include="include\local_outcome.hpp" />
     <ClInclude Include="include\pservice_base" />
     <ClInclude Include="src\bitstring.hpp" />
     <ClInclude Include="src\clock.hpp" />
     <ClInclude Include="src\constant.hpp" />
-    <ClInclude Include="include\error management.hpp" />
+    <ClInclude Include="src\exception.hpp" />
     <ClInclude Include="src\execution.hpp" />
     <ClInclude Include="src\function.hpp" />
-    <ClInclude Include="src\f_pointer.hpp" />
+    <ClInclude Include="include\f_pointer.hpp" />
+    <ClInclude Include="src\generator.hpp" />
     <ClInclude Include="src\printer.hpp" />
     <ClInclude Include="src\setting.hpp" />
     <ClInclude Include="test\t_infinity.hpp" />
     <ClInclude Include="test\t_printer.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="cpp.hint" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

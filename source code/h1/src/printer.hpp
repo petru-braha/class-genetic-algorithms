@@ -1,21 +1,25 @@
 #ifndef _0PRINTER0_
 #define _0PRINTER0_
 
+#include <pservice_base>
 #include <iostream>
 #include <fstream>
 #include <string>
+
+#include "exception.hpp"
 
 #include "constant.hpp"
 #include "function.hpp"
 #include "local_outcome.hpp"
 
-#define PATH_MAX_SIZE 128
+STD_PSERVICE_BEGIN
 
+#define PATH_MAX_SIZE 128
 
 //------------------------------------------------
 // methods:
 
-void print_analysis_header(const function& f, improvement_type imprv, 
+void print_analysis_header(const function& f, improvement_type imprv,
     size_t dimension, std::ostream& out = std::cout)
 {
     out << "function: id " << f.get_id() << ", ";
@@ -38,7 +42,7 @@ void print_analysis_header(const function& f, improvement_type imprv,
 
 void print_iteration(size_t index, std::ostream& out = std::cout)
 {
-    if (0 == index % 10)
+    if (0 == index % 100)
         out << index << "iterations.\n";
 }
 
@@ -114,7 +118,14 @@ printer::printer(const function& f, improvement_type imprv,
     (file_name += component_path) += path_footer;
     path_entire += file_name;
     
-    if (fopen_s(&file, path_entire.c_str(), "w")); // error
+    if (fopen_s(&file, path_entire.c_str(), "w"))
+        throw exception_file();
+
+    // header of the file
+    fputs(std::string("value").c_str(), file);
+    fputs(std::string("\t").c_str(), file);
+    fputs(std::string("milliseconds").c_str(), file);
+    fputs(std::string("\n").c_str(), file);
 }
 
 //------------------------------------------------
@@ -145,4 +156,5 @@ const std::string& printer::get_path() const
     return path_entire;
 }
 
+STD_PSERVICE_END
 #endif

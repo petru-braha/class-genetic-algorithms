@@ -1,15 +1,20 @@
 #ifndef _0EXECTION0_
 #define _0EXECTION0_
 
+#include <pservice_base>
 #include <limits>
 #include <vector>
 #include "printer.hpp"
+#include "exception.hpp"
 
+#include "generator.hpp"
 #include "constant.hpp"
 #include "bitstring.hpp"
 #include "function.hpp"
 
 #include "local_outcome.hpp"
+
+STD_PSERVICE_BEGIN
 
 double* convert(const bitstring& b, const function& f, size_t dimension)
 {
@@ -98,7 +103,6 @@ local_outcome iterated_hillclimbing(const function& f,
 
     for (size_t i = 0; i < ITERATIONS_NUMBER; i++)
     {
-        std::cout << i << ' ';
         // improve
         bitstring representation(f.get_n());
         while (improve(representation, f, imprv, dimension));
@@ -116,9 +120,45 @@ local_outcome iterated_hillclimbing(const function& f,
 
     // stop clock
     long long milliseconds = clock.stop(time_unit::millisecond);
-    if (0 == milliseconds); // error
+    if (0 == milliseconds)
+        throw exception_null();
 
     return { local_minimum, milliseconds };
 }
 
+local_outcome simulated_annealing(const function& f, size_t dimension)
+{
+    // start clock and act
+    time_measurement clock;
+    double local_minimum = std::numeric_limits<double>::infinity();
+    if (setting::objective == objective_type::maximum_point)
+        local_minimum *= -1;
+
+    for (size_t i = 0; i < ITERATIONS_NUMBER; i++)
+    {
+        // improve
+        bitstring representation(f.get_n());
+        while (improve(representation, f, improvement_type::best, 
+            dimension));
+
+        // vc
+        double* numbers = convert(representation, f, dimension);
+        double value_candidate = f.exe(numbers, dimension);
+        delete[]numbers;
+
+        // update
+        if (setting::is_better(local_minimum, value_candidate))
+            local_minimum = value_candidate;
+        print_iteration(i);
+    }
+
+    // stop clock
+    long long milliseconds = clock.stop(time_unit::millisecond);
+    if (0 == milliseconds)
+        throw exception_null();
+
+    return { local_minimum, milliseconds };
+}
+
+STD_PSERVICE_END
 #endif

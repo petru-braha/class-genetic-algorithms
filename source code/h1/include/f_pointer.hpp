@@ -1,12 +1,15 @@
 #ifndef _0FUNCTION_POINTER0_
 #define _0FUNCTION_POINTER0_
 
+#include <pservice_base>
 #include <cmath>
 #include <vector>
 
 #include "constant.hpp"
 
 // fctptr_ == function pointer
+
+STD_PSERVICE_BEGIN
 
 double fctptr_dejong1(const double* const x, const size_t n)
 {
@@ -47,4 +50,5 @@ double fctptr_schwefel(const double* const x, const size_t n)
     return s + 418.9829 * n;
 }
 
+STD_PSERVICE_END
 #endif

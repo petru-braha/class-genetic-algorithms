@@ -2,11 +2,12 @@
 #define _0CLOCK0_
 
 #include <pservice_base>
-#include <chrono>
 #include "constant.hpp"
-
-#define TIME_UNIT_STRIDE 1000
+#include <chrono>
 using namespace std::chrono;
+
+STD_PSERVICE_BEGIN
+#define TIME_UNIT_STRIDE 1000
 
 enum class time_unit
 {
@@ -118,4 +119,5 @@ double time_measurement::get_seconds() const
     return elapsed_time.count();
 }
 
+STD_PSERVICE_END
 #endif

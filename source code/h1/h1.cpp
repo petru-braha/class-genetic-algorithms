@@ -1,13 +1,12 @@
 #include <stdlib.h>
 #include <iostream>
-#include <thread>
 #include <vector>
 
+#include "constant.hpp"
 #include "setting.hpp"
 #include "clock.hpp"
 #include "printer.hpp"
 
-#include "constant.hpp"
 #include "bitstring.hpp"
 #include "function.hpp"
 #include "f_pointer.hpp"
@@ -16,7 +15,7 @@
 #include "t_infinity.hpp"
 #include "t_printer.hpp"
 
-//using namespace pservice;
+using namespace pservice;
 #pragma warning (disable :4996)
 
 static void analysis(const function&, improvement_type, size_t);
@@ -49,15 +48,13 @@ int main()
     return EXIT_SUCCESS;
 }
 
-void print_analysis_header(const function&, improvement_type, 
-    size_t, std::ostream&);
 static void analysis(const function& f, improvement_type imprv, size_t dimension)
 {
     // ux
-    print_analysis_header(f, imprv, dimension);
+    print_analysis_header(f, imprv, dimension, std::cout);
     
     // act
-    local_outcome sample_outcome[SAMPLE_NUMBER];
+    local_outcome sample_outcome[SAMPLE_NUMBER]{};
     for (unsigned char index_sample = 0; index_sample < SAMPLE_NUMBER; index_sample++)
         sample_outcome[index_sample] = iterated_hillclimbing(f, imprv, dimension);
 
@@ -69,8 +66,8 @@ static void analysis(const function& f, improvement_type imprv, size_t dimension
 
 static void run(const function& f)
 {
-    size_t d = 2; // 30
-    analysis(f, improvement_type::best, d);
+    size_t d = 1; // 30
+    analysis(f, improvement_type::first, d);
     //analysis(f, improvement_type::first, d);
     //analysis(f, d, improvement_type::worst);
 }

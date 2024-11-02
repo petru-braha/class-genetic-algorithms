@@ -4,6 +4,8 @@
 #include <pservice_base>
 #include "constant.hpp"
 
+STD_PSERVICE_BEGIN
+
 class function
 {
     // typedefs:
@@ -53,7 +55,7 @@ function::function(double min, double max, fct_ptr ptr) :
     }
 
     n = (unsigned int)((maximum - minimum) * power);
-    n = ceil(log2(n));
+    n = (unsigned int)ceil(log2(n));
     precision += 1;
 }
 
@@ -94,4 +96,5 @@ void* function::get_pointer() const
     return (void*)f;
 }
 
+STD_PSERVICE_END
 #endif
