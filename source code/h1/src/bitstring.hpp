@@ -8,8 +8,7 @@
 #include "constant.hpp"
 
 /* comments:
-* it don't have to consider here the minimum, maximum and precision
-* it's a task for the developer from future
+* it doesn't consider here the minimum, maximum and precision
 */
 
 STD_PSERVICE_BEGIN
@@ -25,8 +24,8 @@ public:
     bitstring(size_t);
 
     // constant methods:
-    bool operator [] (const size_t index) const;
-    bool& operator [] (const size_t);
+    auto operator [] (const size_t) const;
+    auto operator [] (const size_t);
     size_t size() const;
 };
 
@@ -43,14 +42,14 @@ bitstring::bitstring(size_t n) : bits(n)
 //------------------------------------------------
 // constant methods:
 
-bool bitstring::operator [] (const size_t index) const
+auto bitstring::operator [] (const size_t index) const
 {
     return bits[index];
 }
 
-bool& bitstring::operator [] (const size_t index)
+auto bitstring::operator [] (const size_t index)
 {
-    return (bool&)bits[index];
+    return bits[index];
 }
 
 size_t bitstring::size() const

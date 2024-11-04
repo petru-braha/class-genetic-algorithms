@@ -1,3 +1,0 @@
-﻿  h1.cpp
-A:\uni\ga\source code\h1\src\bitstring.hpp(53,1): warning C4172: returning address of local variable or temporary 
-  h1.vcxproj -> A:\uni\ga\source code\x64\Debug\h1.exe
