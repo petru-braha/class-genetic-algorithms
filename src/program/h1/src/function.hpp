@@ -46,17 +46,10 @@ unsigned int function::unused_id = 0;
 function::function(double min, double max, fct_ptr ptr) :
     n(0), id(unused_id++), minimum(min), maximum(max), f(ptr)
 {
-    unsigned int power = 1;
-    unsigned int precision = PRECISION;
-    while(precision)
-    {
-        power *= 10;
-        precision--;
-    }
+    double pw = std::pow(10, PRECISION);
 
-    n = (unsigned int)((maximum - minimum) * power);
+    n = (unsigned int)((maximum - minimum) * pw);
     n = (unsigned int)ceil(log2(n));
-    precision += 1;
 }
 
 //------------------------------------------------

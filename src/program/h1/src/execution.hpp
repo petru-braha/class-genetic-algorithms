@@ -2,6 +2,9 @@
 #define _0EXECTION0_
 
 #include <pservice_base>
+#include <future>
+#include <vector>
+
 #include <limits>
 #include <vector>
 #include "printer.hpp"
@@ -16,7 +19,11 @@
 
 STD_PSERVICE_BEGIN
 
-double* convert(const bitstring& b, const function& f, size_t dimension)
+//------------------------------------------------
+// component methods:
+
+double* convert(const bitstring& b, const function& f, 
+    const size_t dimension)
 {
     size_t bits_per_number = b.size() / dimension;
 
@@ -43,7 +50,7 @@ double* convert(const bitstring& b, const function& f, size_t dimension)
 }
 
 bool improve(bitstring& candidate, const function& f, 
-    improvement_type imprv, size_t dimension)
+    const improvement_type imprv, const size_t dimension)
 {
     double* numbers = convert(candidate, f, dimension);
     double value_current = f.exe(numbers, dimension);
@@ -83,7 +90,7 @@ bool improve(bitstring& candidate, const function& f,
         candidate[i] = !candidate[i];
     }
 
-    if (value_imprv != value_current)
+    if (value_imprv != value_current) // -1 != index_bit
     {
         candidate[index_bit] = !candidate[index_bit];
         return true;
@@ -92,8 +99,63 @@ bool improve(bitstring& candidate, const function& f,
     return false;
 }
 
+//------------------------------------------------
+// actual execution:
+
+local_outcome hillclimbing(const function& f, 
+    const improvement_type imprv, const size_t dimension)
+{
+    time_measurement clock;
+    double local_minimum = std::numeric_limits<double>::infinity();
+    if (setting::objective == objective_type::maximum_point)
+        local_minimum *= -1;
+
+    bitstring representation(dimension * f.get_n());
+    while (improve(representation, f, imprv, dimension));
+
+    double* numbers = convert(representation, f, dimension);
+    double value_candidate = f.exe(numbers, dimension);
+    delete[]numbers;
+
+    long long milliseconds = clock.stop(time_unit::millisecond);
+    if (0 == milliseconds)
+        throw exception_null();
+    
+    return { value_candidate, milliseconds };
+}
+
+/* returns the average time per iteration */
 local_outcome iterated_hillclimbing(const function& f, 
-    improvement_type imprv, size_t dimension)
+    const improvement_type imprv, const size_t dimension, const size_t it_nr)
+{
+    if (it_nr < 100) // less statistical significance
+        throw exception_null();
+
+    long long average_time = 0; 
+    double local_minimum = std::numeric_limits<double>::infinity();
+    if (setting::objective == objective_type::maximum_point)
+        local_minimum *= -1;
+
+    
+    const unsigned int n_thread = std::thread::hardware_concurrency();
+
+
+    for (size_t i = 0; i < it_nr; i++)
+    {
+        local_outcome o = hillclimbing(f, imprv, dimension);
+        if (setting::is_better(local_minimum, o.minimum))
+            local_minimum = o.minimum;
+        average_time += o.time_measurement;
+    }
+    
+    average_time /= it_nr;
+    return { local_minimum, average_time };
+}
+
+/* returns the total time of all iterations */ 
+[[deprecated("slow sequential execution")]]
+local_outcome iterated_hillclimbing(const function& f,
+    const improvement_type imprv, const size_t dimension)
 {
     // start clock and act
     time_measurement clock;
@@ -101,10 +163,10 @@ local_outcome iterated_hillclimbing(const function& f,
     if (setting::objective == objective_type::maximum_point)
         local_minimum *= -1;
 
-    for (size_t i = 0; i < ITERATIONS_NUMBER; i++)
+    for (size_t i = 0; i < it_nr; i++)
     {
         // improve
-        bitstring representation(f.get_n());
+        bitstring representation(dimension * f.get_n());
         while (improve(representation, f, imprv, dimension));
 
         // vc
@@ -115,7 +177,6 @@ local_outcome iterated_hillclimbing(const function& f,
         // update
         if (setting::is_better(local_minimum, value_candidate))
             local_minimum = value_candidate;
-        print_iteration(i);
     }
 
     // stop clock
@@ -126,7 +187,7 @@ local_outcome iterated_hillclimbing(const function& f,
     return { local_minimum, milliseconds };
 }
 
-local_outcome simulated_annealing(const function& f, size_t dimension)
+local_outcome simulated_annealing(const function& f, const size_t dimension)
 {
     // start clock and act
     time_measurement clock;
@@ -134,7 +195,7 @@ local_outcome simulated_annealing(const function& f, size_t dimension)
     if (setting::objective == objective_type::maximum_point)
         local_minimum *= -1;
 
-    for (size_t i = 0; i < ITERATIONS_NUMBER; i++)
+    for (size_t i = 0; i < it_nr; i++)
     {
         // improve
         bitstring representation(f.get_n());
@@ -149,7 +210,6 @@ local_outcome simulated_annealing(const function& f, size_t dimension)
         // update
         if (setting::is_better(local_minimum, value_candidate))
             local_minimum = value_candidate;
-        print_iteration(i);
     }
 
     // stop clock

@@ -29,17 +29,12 @@
 		- each has N values
 			- each has dimension numbers
 
-- log2 N == nr of bits per dimension
+- ceil(log2(N)) == nr of bits per dimension / number
 
 ## to do:
 
 - decide : data_structure, operatii, alegem tehnici, got a new algo
-- generating bitstrings
-- random number function
 - thread manipulation
-- to print
-- r statistics
-- standard deviation
 
 |specifications && statistics|function|dimension|improvement|
 |----------------------------|--------|---------|-----------|
@@ -47,8 +42,3 @@
 |best solution		     |	      |		|	    |
 |average solution	     |	      |		|	    |
 |worst solution		     |	      |		|	    |
-
-## questions:
-
-- function landscape
-- formula of transforming bitstring to a real number

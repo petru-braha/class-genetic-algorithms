@@ -6,3 +6,8 @@
 
 - interpretation after result \ subsection of the results
 - mla  = modern language association 
+
+- about parallelism:
+	- smallest things
+	- waitable things
+	- maybe one iteration of hillclimbing

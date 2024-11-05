@@ -29,10 +29,5 @@ enum class solution_type
     best, average, worst
 };
 
-void normalize(double& number)
-{
-    number = (double)((long long)(number * TO_PRECISION)) / TO_PRECISION;
-}
-
 STD_PSERVICE_END
 #endif

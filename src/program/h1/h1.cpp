@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include <iostream>
-#include <vector>
+#include <thread>
 
 #include "constant.hpp"
 #include "setting.hpp"
@@ -14,6 +14,7 @@
 
 #include "t_infinity.hpp"
 #include "t_printer.hpp"
+#include "t_normalize.hpp"
 
 using namespace pservice;
 #pragma warning (disable :4996)
@@ -53,11 +54,11 @@ static void analysis(const function& f, improvement_type imprv, size_t dimension
     // ux
     print_analysis_header(f, imprv, dimension, std::cout);
     
-    // act
+    // act 
     local_outcome sample_outcome[SAMPLE_NUMBER]{};
-    for (unsigned char index_sample = 0; index_sample < SAMPLE_NUMBER; index_sample++)
-        sample_outcome[index_sample] = iterated_hillclimbing(f, imprv, dimension);
-
+    for (size_t index_sample = 0; index_sample < SAMPLE_NUMBER; index_sample++)
+            sample_outcome[index_sample] = iterated_hillclimbing(f, imprv, dimension);
+    
     // print acts
     printer file(f, imprv, dimension);
     for (unsigned char index_sample = 0; index_sample < SAMPLE_NUMBER; index_sample++)
@@ -66,10 +67,8 @@ static void analysis(const function& f, improvement_type imprv, size_t dimension
 
 static void run(const function& f)
 {
-    size_t d = 30; 
+    size_t d = 5; 
     //analysis(f, improvement_type::best, d);
     analysis(f, improvement_type::first, d);
     //analysis(f, improvement_type::worst, d);
 }
-
-// how much time did it took for the all iterations of a single sample

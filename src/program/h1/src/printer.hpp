@@ -40,10 +40,20 @@ void print_analysis_header(const function& f, improvement_type imprv,
     out << "improvement.\n\n";
 }
 
+[[deprecated("creates chaos of the parallel running")]]
 void print_iteration(size_t index, std::ostream& out = std::cout)
 {
     if (0 == index % 100)
         out << index << "iterations.\n";
+}
+
+std::string normalize(double number)
+{
+    std::string s = std::to_string(number);
+    size_t index = s.find('.');
+    if (index != std::string::npos)
+        return s.substr(0, index + 6);
+    return s;
 }
 
 //------------------------------------------------
@@ -51,7 +61,7 @@ void print_iteration(size_t index, std::ostream& out = std::cout)
 
 const char path_header[] = "../../";
 const char path_folder[] = "output/";
-const char path_footer[] = ".txt";
+const char path_footer[] = ".csv";
 
 class printer
 {
@@ -122,9 +132,9 @@ printer::printer(const function& f, improvement_type imprv,
         throw exception_file();
 
     // header of the file
-    fputs(std::string("value").c_str(), file);
-    fputs(std::string("\t").c_str(), file);
-    fputs(std::string("milliseconds").c_str(), file);
+    fputs(std::string("minimum").c_str(), file);
+    fputs(std::string(",\t").c_str(), file);
+    fputs(std::string("time_measurement").c_str(), file);
     fputs(std::string("\n").c_str(), file);
 }
 
@@ -133,12 +143,11 @@ printer::printer(const function& f, improvement_type imprv,
 
 printer& printer::operator << (const local_outcome& o)
 {
-    fputs(std::to_string(o.minimum).c_str(), file);
-    const char space[] = " ";
-    fputs(space, file);
+    fputs(normalize(o.minimum).c_str(), file);
+    fputs(" ", file);
     fputs(std::to_string(o.time_measurement).c_str(), file);
-    const char nline[] = "\n";
-    fputs(nline, file);
+    fputs("\n", file);
+    
     return *this;
 }
 
