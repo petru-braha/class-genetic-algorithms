@@ -1,0 +1,8 @@
+- poor results for 20.000
+- this vs genetic algorithm z
+
+- \cdot VS \times VS "*"
+- \input == #include
+
+- interpretation after result \ subsection of the results
+- mla  = modern language association 

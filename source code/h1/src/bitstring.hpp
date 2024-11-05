@@ -24,7 +24,7 @@ public:
     bitstring(size_t);
 
     // constant methods:
-    auto operator [] (const size_t) const;
+    bool operator [] (const size_t) const;
     auto operator [] (const size_t);
     size_t size() const;
 };
@@ -42,7 +42,7 @@ bitstring::bitstring(size_t n) : bits(n)
 //------------------------------------------------
 // constant methods:
 
-auto bitstring::operator [] (const size_t index) const
+bool bitstring::operator [] (const size_t index) const
 {
     return bits[index];
 }

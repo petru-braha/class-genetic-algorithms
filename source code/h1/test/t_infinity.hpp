@@ -1,3 +1,6 @@
+#ifndef _0TEST00_
+#define _0TEST00_
+
 #include <iostream>
 #include <limits>
 
@@ -11,3 +14,5 @@ void t_infinity()
 
 	exit(EXIT_SUCCESS);
 }
+
+#endif 

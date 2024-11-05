@@ -18,6 +18,9 @@
     <ClCompile Include="h1.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="test\t_bitstring.hpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\clock.hpp">

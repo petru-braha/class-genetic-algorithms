@@ -132,6 +132,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="h1.cpp" />
+    <ClCompile Include="test\t_bitstring.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\call.hpp" />

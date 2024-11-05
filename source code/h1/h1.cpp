@@ -66,10 +66,10 @@ static void analysis(const function& f, improvement_type imprv, size_t dimension
 
 static void run(const function& f)
 {
-    size_t d = 1; // 30
+    size_t d = 30; 
+    //analysis(f, improvement_type::best, d);
     analysis(f, improvement_type::first, d);
-    //analysis(f, improvement_type::first, d);
-    //analysis(f, d, improvement_type::worst);
+    //analysis(f, improvement_type::worst, d);
 }
 
 // how much time did it took for the all iterations of a single sample

@@ -1,9 +1,0 @@
-include guards
-include directives
-comments
-STD_PSERVICE_BEGIN
-constants
-methods
-classes
-class methods
-STD_PSERVICE_END

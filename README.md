@@ -1,12 +1,10 @@
 # Genetic algoritms:
 
-- each project has source code and a raport
+- each homework is composed of source code, outputs, and raports (interpretation of outputs)
 
-## h1 
-- algorithms:
-	- Hill Climbing 
-	- Simulated annealing
+## h1 two heuristic algorithms:
 
-## h2
+- Hill Climbing 
+- Simulated annealing
 
-## h3
+## h2 a real genetic algorithm

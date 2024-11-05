@@ -9,7 +9,7 @@ static long double f(long double number)
 	return pow(number, 3) - 60 * pow(number, 2) + 900 * number + 100;
 }
 
-long double convert(const bitstring& b)
+static long double convert(const bitstring& b)
 {
 	size_t index_frst_bit = 0;
 	size_t index_last_bit = 5;
@@ -24,21 +24,30 @@ long double convert(const bitstring& b)
 	return value;
 }
 
-int main()
+static void neighborhood(int n)
 {
-	bitstring b(5);
-	long double number = convert(b);
-	b.print(); std::cout << number << ' ' << f(number) << "\n\n";
-
-	for (size_t i = 0; i < 5; i++)
+	for (int i = 0; i <= n; i++)
 	{
-		b[i] = !b[i];
-
-		number = convert(b);
+		bitstring b(i, true);
+		long double number = convert(b);
 		b.print(); std::cout << number << ' ' << f(number) << '\n';
 
-		b[i] = !b[i];
-	}
+		for (size_t i = 0; i < 5; i++)
+		{
+			b[i] = !b[i];
 
+			number = convert(b);
+			std::cout << "n: "; b.print(); std::cout << number << ' ' << f(number) << '\n';
+
+			b[i] = !b[i];
+		}
+
+		std::cout << '\n';
+	}
+}
+
+int main()
+{
+	neighborhood(31);
 	return 0;
 }

@@ -1,3 +1,6 @@
+#ifndef _0TEST10_
+#define _0TEST10_
+
 #include <iostream>
 #include <string>
 
@@ -42,3 +45,5 @@ void t_printer_print_result()
 	p << o;
 	exit(EXIT_SUCCESS);
 }
+
+#endif
