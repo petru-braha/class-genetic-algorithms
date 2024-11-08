@@ -1,3 +1,4 @@
+# h1:
 ## components:
 
 - constant
@@ -31,10 +32,7 @@
 
 - ceil(log2(N)) == nr of bits per dimension / number
 
-## to do:
-
-- decide : data_structure, operatii, alegem tehnici, got a new algo
-- thread manipulation
+- model of raport:
 
 |specifications && statistics|function|dimension|improvement|
 |----------------------------|--------|---------|-----------|
@@ -42,3 +40,13 @@
 |best solution		     |	      |		|	    |
 |average solution	     |	      |		|	    |
 |worst solution		     |	      |		|	    |
+
+- to do:
+	- simulated annealing
+	- optimize improve function
+	- try blocks
+
+
+# h2:
+- meta-GA
+- same functions

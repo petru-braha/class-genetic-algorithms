@@ -19,33 +19,6 @@ STD_PSERVICE_BEGIN
 //------------------------------------------------
 // methods:
 
-void print_analysis_header(const function& f, improvement_type imprv,
-    size_t dimension, std::ostream& out = std::cout)
-{
-    out << "fct_id " << f.get_id() << ", improve ";
-    switch (imprv)
-    {
-    case improvement_type::best:
-        out << "best ,";
-        break;
-    case improvement_type::first:
-        out << "first ,";
-        break;
-    default:
-        out << "worst ,";
-        break;
-    }
-
-    out << dimension << "D.\n\n";
-}
-
-[[deprecated("creates chaos of the parallel running")]]
-void print_iteration(size_t index, std::ostream& out = std::cout)
-{
-    if (0 == index % 100)
-        out << index << "iterations.\n";
-}
-
 std::string normalize(double number)
 {
     std::string s = std::to_string(number);
