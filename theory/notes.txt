@@ -11,3 +11,13 @@
 	- smallest things
 	- waitable things
 	- maybe one iteration of hillclimbing
+
+- time limits 
+	- LLONG_MAX == 9,223,372,036,854,775,807
+	- nanoseconds
+		- 9,223,372,037s
+		- 153,722,867m
+		- 2,562,047h
+		- 106,752d
+	- if the time is represented in nanoseconds and the algorithm runs for more than 106,752 days, it is a overflow
+	? if the time is represented in seconds and the algorithm runs for more 106,752 days; is it the same case?

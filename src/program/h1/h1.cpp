@@ -15,9 +15,9 @@
 #include "t_infinity.hpp"
 #include "t_printer.hpp"
 #include "t_normalize.hpp"
+#include "t_clock.hpp"
 
 using namespace pservice;
-#pragma warning (disable :4996)
 
 static void analysis(const function&, improvement_type, size_t);
 static void run(const function&);
@@ -45,30 +45,31 @@ int main()
     //run(schwefel);
 
     std::cout << "the program ran for " 
-        << clock.stop(time_unit::second) << " seconds.\n";
+        << clock.stop(time_unit::minute) << " minutes.\n";
     return EXIT_SUCCESS;
 }
 
 static void analysis(const function& f, improvement_type imprv, size_t dimension)
 {
-    // ux
     print_analysis_header(f, imprv, dimension, std::cout);
     
-    // act 
     local_outcome sample_outcome[SAMPLE_NUMBER]{};
     for (size_t index_sample = 0; index_sample < SAMPLE_NUMBER; index_sample++)
-            sample_outcome[index_sample] = iterated_hillclimbing(f, imprv, dimension);
+    {
+        std::cout << "sample " << index_sample << '\n';
+        sample_outcome[index_sample] = iterated_hillclimbing(f, imprv, dimension, 5);
+    }
+    std::cout << '\n';
     
-    // print acts
     printer file(f, imprv, dimension);
-    for (unsigned char index_sample = 0; index_sample < SAMPLE_NUMBER; index_sample++)
+    for (size_t index_sample = 0; index_sample < SAMPLE_NUMBER; index_sample++)
         file << sample_outcome[index_sample];
 }
 
 static void run(const function& f)
 {
     size_t d = 5; 
-    //analysis(f, improvement_type::best, d);
+    analysis(f, improvement_type::best, d);
     analysis(f, improvement_type::first, d);
-    //analysis(f, improvement_type::worst, d);
+    analysis(f, improvement_type::worst, d);
 }

@@ -11,8 +11,8 @@ STD_PSERVICE_BEGIN
 
 enum class time_unit
 {
-    second, millisecond, microsecond, nanosecond
-    //      10 ^ (-3)   10 ^ (-6)    10 ^ (-9)
+    minute, second, millisecond, microsecond, nanosecond
+    //      10 ^ 0  10 ^ (-3)    10 ^ (-6)    10 ^ (-9)
 };
 
 //------------------------------------------------
@@ -72,24 +72,22 @@ long long time_measurement::stop(time_unit u)
         return 0;
     
     started = false;
-    steady_clock::time_point stop_point = high_resolution_clock::now();
-    
-    nanoseconds elapsed_time = stop_point - start_point;
+    auto elapsed_time = high_resolution_clock::now() - start_point;
     long long nns = elapsed_time.count();
     
     if (time_unit::nanosecond == u)
-        return nns;
+        return elapsed_time.count();
 
-    nns /= TIME_UNIT_STRIDE;
     if (time_unit::microsecond == u)
-        return nns;
+        return duration_cast<microseconds>(elapsed_time).count();
 
-    nns /= TIME_UNIT_STRIDE;
     if (time_unit::millisecond == u)
-        return nns;
+        return duration_cast<milliseconds>(elapsed_time).count();
 
-    nns /= TIME_UNIT_STRIDE;
-    return nns;
+    if(time_unit::second == u)
+        return duration_cast<seconds>(elapsed_time).count();
+
+    return duration_cast<minutes>(elapsed_time).count();
 }
 
 //------------------------------------------------

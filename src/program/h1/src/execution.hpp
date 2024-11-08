@@ -22,34 +22,42 @@ STD_PSERVICE_BEGIN
 //------------------------------------------------
 // component methods:
 
+size_t decimal(const bitstring& b, const size_t i0, const size_t i1)
+{
+    size_t value = 0;
+    for (size_t i = i0; i < i1; i++)
+    {
+        value *= 2;
+        value += b[i];
+    }
+
+    return value;
+}
+
+double convert(const size_t decimal, const function& f)
+{
+    double value = f.get_minimum();
+    value += decimal * (f.get_maximum() - f.get_minimum()) / 
+        (pow(2, f.get_n()) - 1);
+    return value;
+}
+
 double* convert(const bitstring& b, const function& f, 
     const size_t dimension)
 {
-    size_t bits_per_number = b.size() / dimension;
-
     double* numbers = new double[dimension] {};
     for (size_t index_number = 0; index_number < dimension; index_number++)
     {
-        size_t index_frst_bit = bits_per_number * index_number;
-        size_t index_last_bit = bits_per_number * (index_number + 1);
-
-        size_t value = 0;
-        for (size_t index_bit = index_frst_bit; index_bit < index_last_bit; index_bit++)
-        {
-            value *= 2;
-            value += b[index_bit];
-        }
-
-        double final_value = f.get_minimum();
-        final_value += value * (f.get_maximum() - f.get_minimum()) / (pow(2, bits_per_number) - 1);
-
-        numbers[index_number] = final_value;
+        size_t index_frst_bit = f.get_n() * index_number;
+        size_t index_last_bit = f.get_n() * (index_number + 1);
+        size_t value = decimal(b, index_frst_bit, index_last_bit);
+        numbers[index_number] = convert(value, f);
     }
 
     return numbers;
 }
 
-bool improve(bitstring& candidate, const function& f, 
+bool improve(bitstring& candidate, const function& f,
     const improvement_type imprv, const size_t dimension)
 {
     double* numbers = convert(candidate, f, dimension);
@@ -74,12 +82,12 @@ bool improve(bitstring& candidate, const function& f,
             switch (imprv)
             {
             case improvement_type::best:
-                if (value_neighborhood > value_imprv)
+                if (setting::is_better(value_imprv, value_neighborhood))
                     value_imprv = value_neighborhood;
                 break;
             case improvement_type::worst:
-                if(value_imprv == value_current || 
-                    value_neighborhood < value_imprv)
+                if (value_imprv == value_current ||
+                    setting::is_better(value_neighborhood, value_imprv))
                     value_imprv = value_neighborhood;
                 break;
             default: // first
@@ -89,6 +97,7 @@ bool improve(bitstring& candidate, const function& f,
 
         candidate[i] = !candidate[i];
     }
+
 
     if (value_imprv != value_current) // -1 != index_bit
     {
@@ -100,16 +109,12 @@ bool improve(bitstring& candidate, const function& f,
 }
 
 //------------------------------------------------
-// actual execution:
+// default method:
 
 local_outcome hillclimbing(const function& f, 
     const improvement_type imprv, const size_t dimension)
 {
     time_measurement clock;
-    double local_minimum = std::numeric_limits<double>::infinity();
-    if (setting::objective == objective_type::maximum_point)
-        local_minimum *= -1;
-
     bitstring representation(dimension * f.get_n());
     while (improve(representation, f, imprv, dimension));
 
@@ -117,53 +122,78 @@ local_outcome hillclimbing(const function& f,
     double value_candidate = f.exe(numbers, dimension);
     delete[]numbers;
 
-    long long milliseconds = clock.stop(time_unit::millisecond);
-    if (0 == milliseconds)
+    long long time = clock.stop(time_unit::millisecond);
+    if (0 == time)
         throw exception_null();
     
-    return { value_candidate, milliseconds };
+    return { value_candidate, time };
 }
+
+//------------------------------------------------
+// thread manipulation:
+
+void parallel_iteration(local_outcome& o,
+    const size_t n_thread, const function& f, 
+    const improvement_type& imprv, const size_t dimension)
+{
+    // async execution
+    std::vector<std::future<local_outcome>> output(n_thread);
+    for (size_t i_thread = 0; i_thread < n_thread; i_thread++)
+        output[i_thread] = std::async(std::launch::async,
+            hillclimbing, f, imprv, dimension);
+    
+    // query of the data
+    for (size_t i_thread = 0; i_thread < n_thread; i_thread++)
+    {
+        local_outcome candidate = output[i_thread].get();
+        if (setting::is_better(o.minimum, candidate.minimum))
+            o.minimum = candidate.minimum;
+        o.time_measurement += candidate.time_measurement;
+    }
+}
+
+//------------------------------------------------
+// iterated methods:
 
 /* returns the average time per iteration */
 local_outcome iterated_hillclimbing(const function& f, 
-    const improvement_type imprv, const size_t dimension, const size_t it_nr)
+    const improvement_type imprv, 
+    const size_t dimension, 
+    const size_t it_nr)
 {
-    if (it_nr < 100) // less statistical significance
-        throw exception_null();
+    //if (it_nr < 100) // weak statistical significance
+        //throw exception_null();
 
-    long long average_time = 0; 
-    double local_minimum = std::numeric_limits<double>::infinity();
-    if (setting::objective == objective_type::maximum_point)
-        local_minimum *= -1;
-
-    
     const unsigned int n_thread = std::thread::hardware_concurrency();
+    double value_init = std::numeric_limits<double>::infinity();
+    if (setting::objective == objective_type::maximum_point)
+        value_init *= -1;
 
+    local_outcome outcome{ value_init, 0 };
+    size_t it = 0;
 
-    for (size_t i = 0; i < it_nr; i++)
-    {
-        local_outcome o = hillclimbing(f, imprv, dimension);
-        if (setting::is_better(local_minimum, o.minimum))
-            local_minimum = o.minimum;
-        average_time += o.time_measurement;
-    }
+    for (; it + n_thread < it_nr; it += n_thread)
+        parallel_iteration(outcome, n_thread, f, imprv, dimension);
+    parallel_iteration(outcome, it_nr - it, f, imprv, dimension);
     
-    average_time /= it_nr;
-    return { local_minimum, average_time };
+    outcome.time_measurement /= it_nr;
+    return outcome;
 }
 
 /* returns the total time of all iterations */ 
 [[deprecated("slow sequential execution")]]
 local_outcome iterated_hillclimbing(const function& f,
-    const improvement_type imprv, const size_t dimension)
+    const improvement_type imprv, 
+    const size_t dimension)
 {
+    return { 0, 0 };
     // start clock and act
     time_measurement clock;
     double local_minimum = std::numeric_limits<double>::infinity();
     if (setting::objective == objective_type::maximum_point)
         local_minimum *= -1;
 
-    for (size_t i = 0; i < it_nr; i++)
+    for (size_t i = 0; i < ITERATIONS_NUMBER; i++)
     {
         // improve
         bitstring representation(dimension * f.get_n());
@@ -195,13 +225,18 @@ local_outcome simulated_annealing(const function& f, const size_t dimension)
     if (setting::objective == objective_type::maximum_point)
         local_minimum *= -1;
 
-    for (size_t i = 0; i < it_nr; i++)
+    // previouserature
+    size_t previouserature = 0;
+
+    for (size_t i = 0; i < ITERATIONS_NUMBER; i++)
     {
         // improve
         bitstring representation(f.get_n());
-        while (improve(representation, f, improvement_type::best, 
+        if (improve(representation, f, improvement_type::best,
             dimension));
-
+        //else if (true);
+            // accept bad result
+        
         // vc
         double* numbers = convert(representation, f, dimension);
         double value_candidate = f.exe(numbers, dimension);
@@ -210,6 +245,8 @@ local_outcome simulated_annealing(const function& f, const size_t dimension)
         // update
         if (setting::is_better(local_minimum, value_candidate))
             local_minimum = value_candidate;
+
+        // previouserature update (i)
     }
 
     // stop clock

@@ -71,6 +71,9 @@
     <ClInclude Include="test\t_normalize.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="test\t_clock.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="cpp.hint" />

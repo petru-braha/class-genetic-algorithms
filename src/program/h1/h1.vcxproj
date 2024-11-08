@@ -148,6 +148,7 @@
     <ClInclude Include="src\generator.hpp" />
     <ClInclude Include="src\printer.hpp" />
     <ClInclude Include="src\setting.hpp" />
+    <ClInclude Include="test\t_clock.hpp" />
     <ClInclude Include="test\t_normalize.hpp" />
     <ClInclude Include="test\t_infinity.hpp" />
     <ClInclude Include="test\t_printer.hpp" />

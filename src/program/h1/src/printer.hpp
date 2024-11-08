@@ -59,7 +59,7 @@ std::string normalize(double number)
 //------------------------------------------------
 // classes:
 
-const char path_header[] = "../../";
+const char path_header[] = "../../../";
 const char path_folder[] = "output/";
 const char path_footer[] = ".csv";
 
@@ -144,7 +144,7 @@ printer::printer(const function& f, improvement_type imprv,
 printer& printer::operator << (const local_outcome& o)
 {
     fputs(normalize(o.minimum).c_str(), file);
-    fputs(" ", file);
+    fputs(",\t", file);
     fputs(std::to_string(o.time_measurement).c_str(), file);
     fputs("\n", file);
     
