@@ -57,62 +57,87 @@ double* convert(const bitstring& b, const function& f,
     return numbers;
 }
 
+// modifies just one number after one bit flip
 bool improve(bitstring& candidate, const function& f,
-    const improvement_type imprv, const size_t dimension)
+    const strategy_type imprv, const size_t dimension)
 {
     double* numbers = convert(candidate, f, dimension);
-    double value_current = f.exe(numbers, dimension);
-    delete[]numbers;
+    double f_value_current = f.exe(numbers, dimension);
+    double f_value_imprv = f_value_current;
+    long long index_bit_imprv = -1;
+    // the candidate bitstring is not changed in the loop
+    // it is changed at the end with this cached index
 
-    double value_imprv = value_current;
-    long long index_bit = -1;
-
-    for (size_t i = 0; i < candidate.size(); i++)
+    // for each number
+    size_t index_frst = 0, index_last = f.get_n();
+    for (size_t d = 0; d < dimension; d++)
     {
-        candidate[i] = !candidate[i];
-
-        numbers = convert(candidate, f, dimension);
-        double value_neighborhood = f.exe(numbers, dimension);
-        delete[]numbers;
-
-        if (setting::is_better(value_current, value_neighborhood))
+        // for each bit of the number
+        for (size_t index_bit = index_frst;
+            index_bit < index_last; index_bit++)
         {
-            index_bit = i;
+            candidate[index_bit] = !candidate[index_bit];
+            double previous = numbers[d];
 
-            switch (imprv)
+            // evaluates f again with the new number as argument
+            double value = convert(decimal(
+                candidate, index_frst, index_last), f);
+            numbers[d] = value;
+            double f_value_neighborhood =
+                f.exe(numbers, dimension);
+
+            numbers[d] = previous;
+            candidate[index_bit] = !candidate[index_bit];
+
+            if (setting::is_better(f_value_neighborhood, f_value_current))
             {
-            case improvement_type::best:
-                if (setting::is_better(value_imprv, value_neighborhood))
-                    value_imprv = value_neighborhood;
-                break;
-            case improvement_type::worst:
-                if (value_imprv == value_current ||
-                    setting::is_better(value_neighborhood, value_imprv))
-                    value_imprv = value_neighborhood;
-                break;
-            default: // first
-                return true;
+                index_bit_imprv = index_bit;
+
+                switch (imprv)
+                {
+                case strategy_type::best:
+                    if (setting::is_better(f_value_neighborhood, f_value_imprv))
+                        f_value_imprv = f_value_neighborhood;
+                    break;
+                case strategy_type::worst:
+                    if (f_value_imprv == f_value_current ||
+                        setting::is_better(f_value_imprv, f_value_neighborhood))
+                        f_value_imprv = f_value_neighborhood;
+                    break;
+                default: // first
+                    candidate[index_bit_imprv] = !candidate[index_bit_imprv];
+                    return true;
+                }
             }
         }
 
-        candidate[i] = !candidate[i];
+        index_frst += f.get_n();
+        index_last += f.get_n();
     }
 
-
-    if (value_imprv != value_current) // -1 != index_bit
+    // all hamming one neighbours were analysed
+    delete[]numbers;
+    if (f_value_imprv != f_value_current) // -1 != index_bit
     {
-        candidate[index_bit] = !candidate[index_bit];
+        candidate[index_bit_imprv] = !candidate[index_bit_imprv];
         return true;
     }
 
     return false;
 }
 
+void temperature_update(double& temperature, 
+    double init, size_t it)
+{
+    double cooling_schedule = 0.985;
+    temperature = init * std::pow(cooling_schedule, it);
+}
+
 //------------------------------------------------
 // default method:
 
 local_outcome hillclimbing(const function& f, 
-    const improvement_type imprv, const size_t dimension)
+    const strategy_type imprv, const size_t dimension)
 {
     time_measurement clock;
     bitstring representation(dimension * f.get_n());
@@ -134,7 +159,7 @@ local_outcome hillclimbing(const function& f,
 
 void parallel_iteration(local_outcome& o,
     const size_t n_thread, const function& f, 
-    const improvement_type& imprv, const size_t dimension)
+    const strategy_type& imprv, const size_t dimension)
 {
     // async execution
     std::vector<std::future<local_outcome>> output(n_thread);
@@ -146,8 +171,8 @@ void parallel_iteration(local_outcome& o,
     for (size_t i_thread = 0; i_thread < n_thread; i_thread++)
     {
         local_outcome candidate = output[i_thread].get();
-        if (setting::is_better(o.minimum, candidate.minimum))
-            o.minimum = candidate.minimum;
+        if (setting::is_better(candidate.optimum, o.optimum))
+            o.optimum = candidate.optimum;
         o.time_measurement += candidate.time_measurement;
     }
 }
@@ -155,9 +180,9 @@ void parallel_iteration(local_outcome& o,
 //------------------------------------------------
 // iterated methods:
 
-/* returns the average time per iteration */
+/* returns the total time for all iterations */
 local_outcome iterated_hillclimbing(const function& f, 
-    const improvement_type imprv, 
+    const strategy_type imprv, 
     const size_t dimension, 
     const size_t it_nr)
 {
@@ -176,85 +201,77 @@ local_outcome iterated_hillclimbing(const function& f,
         parallel_iteration(outcome, n_thread, f, imprv, dimension);
     parallel_iteration(outcome, it_nr - it, f, imprv, dimension);
     
-    outcome.time_measurement /= it_nr;
+    outcome.time_measurement;
     return outcome;
-}
-
-/* returns the total time of all iterations */ 
-[[deprecated("slow sequential execution")]]
-local_outcome iterated_hillclimbing(const function& f,
-    const improvement_type imprv, 
-    const size_t dimension)
-{
-    return { 0, 0 };
-    // start clock and act
-    time_measurement clock;
-    double local_minimum = std::numeric_limits<double>::infinity();
-    if (setting::objective == objective_type::maximum_point)
-        local_minimum *= -1;
-
-    for (size_t i = 0; i < ITERATIONS_NUMBER; i++)
-    {
-        // improve
-        bitstring representation(dimension * f.get_n());
-        while (improve(representation, f, imprv, dimension));
-
-        // vc
-        double* numbers = convert(representation, f, dimension);
-        double value_candidate = f.exe(numbers, dimension);
-        delete[]numbers;
-
-        // update
-        if (setting::is_better(local_minimum, value_candidate))
-            local_minimum = value_candidate;
-    }
-
-    // stop clock
-    long long milliseconds = clock.stop(time_unit::millisecond);
-    if (0 == milliseconds)
-        throw exception_null();
-
-    return { local_minimum, milliseconds };
 }
 
 local_outcome simulated_annealing(const function& f, const size_t dimension)
 {
-    // start clock and act
     time_measurement clock;
-    double local_minimum = std::numeric_limits<double>::infinity();
-    if (setting::objective == objective_type::maximum_point)
-        local_minimum *= -1;
-
-    // previouserature
-    size_t previouserature = 0;
-
-    for (size_t i = 0; i < ITERATIONS_NUMBER; i++)
+    
+    // temperature initialization
+    double temperature_init = (double)dimension;
+    switch (f.get_n()) // f_max 1D
     {
-        // improve
-        bitstring representation(f.get_n());
-        if (improve(representation, f, improvement_type::best,
-            dimension));
-        //else if (true);
-            // accept bad result
-        
-        // vc
+    case 0: // de jong 1
+        temperature_init  *= 1;
+        break;
+    case 1: // rastrigin
+        temperature_init  *= 40;
+        break;
+    case 2: // schwefel
+        temperature_init  *= 840;
+        break;
+    case 3: // michalewicz
+        temperature_init  *= 2;
+        break;
+    default:
+        break;
+    }
+    temperature_init /= abs(log(0.8));
+    double temperature = temperature_init;
+    double temperature_threshold = temperature * 1e-8;
+    
+    // vc
+    bitstring representation(dimension * f.get_n());
+    double* numbers = convert(representation, f, dimension);
+    double local_optimum = f.exe(numbers, dimension);
+    delete[]numbers;
+
+    // loop
+    size_t it = 0, stagnation = 0;
+    while(temperature > temperature_threshold && stagnation < SA_MAX_STAGNATION)
+    {
+        // select at random a neigbour
         double* numbers = convert(representation, f, dimension);
         double value_candidate = f.exe(numbers, dimension);
         delete[]numbers;
 
         // update
-        if (setting::is_better(local_minimum, value_candidate))
-            local_minimum = value_candidate;
+        if (setting::is_better(value_candidate, local_optimum))
+            local_optimum = value_candidate;
+        else
+        {
+            random_generator g;
+            double probability = std::exp(-1 * abs(value_candidate - local_optimum) / temperature);
+            if (g(0, 1) < probability)
+                local_optimum = value_candidate;
+        }
 
-        // previouserature update (i)
+        temperature_update(temperature, temperature_init, it);
+        if (++it == ITERATIONS_NUMBER)
+            break;
     }
+
+    // to change such that it can modify the current bitstring
+    // iterated_hillclimbing(f, strategy_type::best, dimension, ITERATIONS_NUMBER - it);
 
     // stop clock
     long long milliseconds = clock.stop(time_unit::millisecond);
     if (0 == milliseconds)
         throw exception_null();
 
-    return { local_minimum, milliseconds };
+    return { local_optimum, milliseconds };
 }
 
 STD_PSERVICE_END

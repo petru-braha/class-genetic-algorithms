@@ -11,7 +11,7 @@ struct setting
 	static objective_type objective;
 	static int precision;
 
-	static bool is_better(double current, double candidate)
+	static bool is_better(double candidate, double current)
 	{
 		if (objective_type::minimum_point == objective)
 		{

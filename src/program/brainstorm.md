@@ -32,7 +32,21 @@
 
 - ceil(log2(N)) == nr of bits per dimension / number
 
-- model of raport:
+## sa:
+
+- value_candidate - local_optimum => how much worse is the current candidate compared to our best (worse => lower prob of getting accepted)
+- temperature can only decrease
+- high temperature => high probability => exploration 
+
+- finding a cooling schedule is hard
+- how to choose parameters ?
+- attempt ?
+
+- how to choose cooling schedule?
+- how to choose treshold?
+- how to choose stagnation number	
+
+## model of raport:
 
 |specifications && statistics|function|dimension|improvement|
 |----------------------------|--------|---------|-----------|
@@ -41,11 +55,14 @@
 |average solution	     |	      |		|	    |
 |worst solution		     |	      |		|	    |
 
-- to do:
-	- simulated annealing
-	- optimize improve function
-	- try blocks
+## to do:
 
+- random between 0 1
+- simulated annealing
+- idea of constexpr: of dimension no more pointers
+- order of function
+- try blocks
+- change names of var
 
 # h2:
 - meta-GA

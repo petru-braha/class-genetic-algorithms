@@ -3,7 +3,7 @@
 
 struct local_outcome
 {
-    double minimum;
+    double optimum;
     long long time_measurement;
 };
 

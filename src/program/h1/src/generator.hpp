@@ -24,6 +24,10 @@ public:
     }
 
     inline unsigned int operator () () { return generator(); }
+    inline unsigned int operator () (double minimum, double maximum) { 
+        return generator(); 
+    }
+    // TODO
 };
 
 STD_PSERVICE_END
