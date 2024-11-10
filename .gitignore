@@ -1,13 +1,13 @@
-.Rproj
 .Rproj.user
 .Rhistory
 .RData
 .Ruserdata
+*.Rproj
 
 .vs
-*/x64/
-*/x86/
+*/x64/*
+*/x86/*
 *.vcxproj
 *.vcxproj.filters
-.vcxproj.user
+*.vcxproj.user
 *.sln
