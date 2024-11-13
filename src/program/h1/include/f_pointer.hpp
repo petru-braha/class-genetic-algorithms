@@ -3,13 +3,11 @@
 
 #include <pservice_base>
 #include <cmath>
-#include <vector>
-
-#include "constant.hpp"
-
-// fctptr_ == function pointer
 
 STD_PSERVICE_BEGIN
+
+typedef double (*fct_ptr)(const double* const numbers,
+    const size_t dimension);
 
 double fctptr_dejong1(const double* const x, const size_t n)
 {

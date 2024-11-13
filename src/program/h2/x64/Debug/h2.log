@@ -1,0 +1,10 @@
+﻿  h2.cpp
+A:\uni\ga\src\program\h2\src\parameter.hpp(24,2): error C2059: syntax error: '}'
+  (compiling source file 'h2.cpp')
+  
+A:\uni\ga\src\program\h2\src\parameter.hpp(21,26): error C3615: constexpr function 'pservice::parameter::bad_value' cannot result in a constant expression
+  (compiling source file 'h2.cpp')
+      A:\uni\ga\src\program\h2\src\parameter.hpp(21,26):
+      failure was caused by control reaching the end of a constexpr function
+  
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.41.34120\include\numbers(11): warning STL4038: The contents of <numbers> are available only with C++20 or later.

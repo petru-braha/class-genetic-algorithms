@@ -67,3 +67,5 @@
 # h2:
 - meta-GA
 - same functions
+
+- i won't consider a singleton a good pattern for projects. one time use => functional programming

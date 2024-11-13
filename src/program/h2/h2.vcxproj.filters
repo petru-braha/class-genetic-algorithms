@@ -18,19 +18,10 @@
     <ClInclude Include="include\call.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\f_pointer.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\local_outcome.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\bitstring.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\clock.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\constant.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\exception.hpp">
@@ -39,16 +30,25 @@
     <ClInclude Include="src\execution.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\function.hpp">
+    <ClInclude Include="src\generator.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\generator.hpp">
+    <ClInclude Include="src\parameter.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\constant.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\printer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\setting.hpp">
+    <ClInclude Include="include\outcome.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\f_pointer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\function.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -56,5 +56,8 @@
     <ClCompile Include="h2.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="cpp.hint" />
   </ItemGroup>
 </Project>

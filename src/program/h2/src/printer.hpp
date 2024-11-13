@@ -10,7 +10,7 @@
 
 #include "constant.hpp"
 #include "function.hpp"
-#include "local_outcome.hpp"
+#include "outcome.hpp"
 
 STD_PSERVICE_BEGIN
 
@@ -18,6 +18,36 @@ STD_PSERVICE_BEGIN
 
 //------------------------------------------------
 // methods:
+
+void print_analysis_header(const function& f, strategy_type imprv,
+    size_t dimension, std::ostream& out = std::cout)
+{
+    out << "fct_id " << f.get_id() << ", improve ";
+    switch (imprv)
+    {
+    case strategy_type::best:
+        out << "best";
+        break;
+    case strategy_type::first:
+        out << "first";
+        break;
+    case strategy_type::worst:
+        out << "worst";
+        break;
+    default:
+        out << "simulated annealing";
+        break;
+    }
+
+    out << ", " << dimension << "D.\n\n";
+}
+
+[[deprecated("creates chaos of the parallel running")]]
+void print_iteration(size_t index, std::ostream& out = std::cout)
+{
+    if (0 == index % 100)
+        out << index << "iterations.\n";
+}
 
 std::string normalize(double number)
 {
@@ -44,11 +74,11 @@ class printer
 public:
     // constructors:
     ~printer();
-    printer(const function&, improvement_type, size_t);
+    printer(const function&, strategy_type, size_t);
     printer() = delete;
 
     // specific methods:
-    printer& operator << (const local_outcome&);
+    printer& operator << (const outcome&);
     printer& operator << (std::string&);
 
     // constant methods:
@@ -63,7 +93,7 @@ printer::~printer()
     fclose(file);
 }
 
-printer::printer(const function& f, improvement_type imprv, 
+printer::printer(const function& f, strategy_type imprv, 
     size_t dimension) : path_entire(), file(nullptr)
 {
     (path_entire += path_header) += path_folder;
@@ -80,16 +110,17 @@ printer::printer(const function& f, improvement_type imprv,
     
     switch (imprv)
     {
-    case improvement_type::best:
+    case strategy_type::best:
         component_path = "improve best";
         break;
-    case improvement_type::first:
+    case strategy_type::first:
         component_path = "improve first";
         break;
-    case improvement_type::worst:
+    case strategy_type::worst:
         component_path = "improve worst";
         break;
     default:
+        component_path = "simulated annealing";
         break;
     }
 
@@ -113,9 +144,9 @@ printer::printer(const function& f, improvement_type imprv,
 //------------------------------------------------
 // specific methods:
 
-printer& printer::operator << (const local_outcome& o)
+printer& printer::operator << (const outcome& o)
 {
-    fputs(normalize(o.minimum).c_str(), file);
+    fputs(normalize(o.optimum).c_str(), file);
     fputs(",\t", file);
     fputs(std::to_string(o.time_measurement).c_str(), file);
     fputs("\n", file);

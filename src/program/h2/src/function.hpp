@@ -2,16 +2,13 @@
 #define _0FUnCTIOn0_
 
 #include <pservice_base>
+#include "f_pointer.hpp"
 #include "constant.hpp"
 
 STD_PSERVICE_BEGIN
 
 class function
 {
-    // typedefs:
-    typedef double (*fct_ptr)(const double* const numbers,
-        const size_t dimension);
-    
     // data members:
     unsigned int n, id;
     const double minimum;
@@ -32,7 +29,7 @@ public:
     const unsigned int& get_id() const;
     const double& get_minimum() const;
     const double& get_maximum() const;
-    void* get_pointer() const;
+    fct_ptr get_pointer() const;
 
     // static:
     static unsigned int unused_id;
@@ -84,9 +81,9 @@ const double& function::get_maximum() const
     return maximum;
 }
 
-void* function::get_pointer() const
+fct_ptr function::get_pointer() const
 {
-    return (void*)f;
+    return f;
 }
 
 STD_PSERVICE_END

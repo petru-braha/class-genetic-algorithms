@@ -5,28 +5,21 @@
 
 STD_PSERVICE_BEGIN
 
-#define ERROR_CODE -1
+constexpr double PI = 3.14159265358979323846;
 
-#define SAMPLE_NUMBER 30
-#define ITERATIONS_NUMBER 10000
+constexpr size_t SAMPLE_NUMBER = 30;
+constexpr size_t ITERATIONS_NUMBER = 10000;
+constexpr size_t SA_MAX_STAGNATION = 5;
+constexpr size_t PRECISION = 5;
 
-#define TO_PRECISION 100000
-#define PRECISION 5
-#define PI 3.14159
-
-enum class objective_type // not now
+enum class objective_type
 {
     minimum_point, maximum_point
 };
 
-enum class improvement_type
+enum class strategy_type
 {
-    best, first, worst
-};
-
-enum class solution_type
-{
-    best, average, worst
+    best, first, worst, sa
 };
 
 STD_PSERVICE_END

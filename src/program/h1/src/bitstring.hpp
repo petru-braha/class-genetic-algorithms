@@ -21,7 +21,7 @@ public:
     // constructors:
     ~bitstring() = default;
     bitstring() = delete;
-    bitstring(size_t);
+    bitstring(const size_t);
 
     // constant methods:
     bool operator [] (const size_t) const;
@@ -32,7 +32,7 @@ public:
 //------------------------------------------------
 // constructors:
 
-bitstring::bitstring(size_t n) : bits(n)
+bitstring::bitstring(const size_t n) : bits(n)
 {
     random_generator g;
     for (size_t i = 0; i < n; i++)

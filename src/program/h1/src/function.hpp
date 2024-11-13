@@ -2,16 +2,13 @@
 #define _0FUnCTIOn0_
 
 #include <pservice_base>
+#include "f_pointer.hpp"
 #include "constant.hpp"
 
 STD_PSERVICE_BEGIN
 
 class function
 {
-    // typedefs:
-    typedef double (*fct_ptr)(const double* const numbers,
-        const size_t dimension);
-    
     // data members:
     unsigned int n, id;
     const double minimum;
