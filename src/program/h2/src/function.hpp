@@ -4,6 +4,7 @@
 #include <pservice_base>
 #include "f_pointer.hpp"
 #include "constant.hpp"
+#include "parameter.hpp"
 
 STD_PSERVICE_BEGIN
 
@@ -23,6 +24,7 @@ public:
     
     // specific methods:
     double exe(const double* const, const size_t) const;
+    double exe(const double* const) const;
 
     // constant methods:
     const unsigned int& get_n() const;
@@ -52,10 +54,17 @@ function::function(double min, double max, fct_ptr ptr) :
 //------------------------------------------------
 // specific methods:
 
+// for hill-climbing and simulated annealing
 double function::exe(const double* const numbers, 
     const size_t dimension) const
 {
     return f(numbers, dimension);
+}
+
+// for genetic algorithm
+double function::exe(const double* const numbers) const
+{
+    return f(numbers, parameter::dimension);
 }
 
 //------------------------------------------------

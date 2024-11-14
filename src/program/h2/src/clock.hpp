@@ -52,8 +52,8 @@ time_measurement::time_measurement() :
 //------------------------------------------------
 // specific methods:
 
-// automatically starts when constructed
-// returns true if this call started the time
+/* automatically starts when constructed 
+returns true if this call started the time */
 bool time_measurement::start()
 {
     if (false == started)

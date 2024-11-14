@@ -10,12 +10,11 @@
 #include "printer.hpp"
 #include "exception.hpp"
 
+#include "outcome.hpp"
 #include "generator.hpp"
 #include "constant.hpp"
 #include "bitstring.hpp"
 #include "function.hpp"
-
-#include "outcome.hpp"
 
 STD_PSERVICE_BEGIN
 
@@ -63,59 +62,126 @@ double* convert(const bitstring& b, const function& f,
 //------------------------------------------------
 // operators:
 
-std::vector<double> fitness_values;
+double* best_fitness_values = nullptr;
 
-void evaluate(std::vector<chromosome>& population, fct_ptr fitness)
+double evaluate(std::vector<chromosome>& population, const function& f)
 {
+    double fittest = parameter::poor_value();
 
+    for (size_t i = 0; i < population.size(); i++)
+    {
+        double* fitness_values = convert(population.at(i), f, parameter::dimension);
+        double candidate = f.exe(fitness_values);
+        if (parameter::is_better(candidate, fittest))
+        {
+            fittest = candidate; 
+            best_fitness_values ? delete[]best_fitness_values : (void)0;
+            best_fitness_values = fitness_values;
+        }
+        else
+            delete[]fitness_values;
+    }
+    
+    return fittest;
 }
 
-void select(std::vector<chromosome>& population, fct_ptr fitness)
+void select(std::vector<chromosome>& population, function fitness)
 {
     // greater chance for those with a better fitness value
     double total_fitness = 0;
     for (size_t i = 0; i < population.size(); i++)
-        total_fitness += fitness_values.at(i);
+        total_fitness += best_fitness_values[i];
     
     std::vector<double> probabilities(population.size());
     for (size_t i = 0; i < population.size(); i++)
-        probabilities[i] = fitness_values.at(i) / total_fitness;
+        probabilities[i] = best_fitness_values[i] / total_fitness;
 
-    std::vector<double> prob_roulette(probabilities);
+    std::vector<double> roulette(probabilities);
     for (size_t i = 1; i < population.size(); i++)
-        prob_roulette[i] += prob_roulette.at(i - 1);
+        roulette[i] += roulette.at(i - 1);
 
-    // generate number 
+    // find next generation
+    random_generator g;
+    std::vector<size_t> index_presence(population.size());
+    for (size_t i = 0; i < population.size(); i++)
+        for (size_t spot = 0; spot < roulette.size(); spot++)
+            if (g(0, 1) <= roulette.at(spot))
+            {
+                index_presence[spot]++;
+                break;
+            }
+
+    std::vector<size_t> index_list_null;
+    std::vector<size_t> index_list_real;
+    for (size_t i = 0; i < index_presence.size(); i++)
+    {
+        if (0 == index_presence[i])
+            index_list_null.emplace_back(i);
+        else
+            while (index_presence[i])
+            {
+                index_list_real.emplace_back(i);
+                index_presence[i]--;
+            }
+    }
+
+    size_t index_index_p = 0;
+    for (size_t i = 0; i < index_list_null.size(); i++)
+    {
+        population[index_list_null[i]] = 
+            population[index_list_real[index_index_p]];
+        index_index_p++;
+    }
+}
+
+void mutate(std::vector<chromosome>& population)
+{
 
 }
 
+void cross_over(std::vector<chromosome>& population)
+{
+
+}
 
 //------------------------------------------------
 // genetic algorithm:
 
-outcome genetic_algorithm(const function& f, const size_t generations)
+outcome genetic_algorithm(const function& f, const size_t generations = 100)
 {
+    time_measurement clock;
+
     std::vector<chromosome> population;
-    for (size_t i = 0; i < 50; i++)
-        population.emplace_back(5);
-
-    return { 0, 0 };
-
-    // evaluate
-    f.get_pointer();
+    for (size_t i = 0; i < POPULATION_SIZE; i++)
+        population.emplace_back(f.get_n() * parameter::dimension);
     
+    double local_optimum = evaluate(population, f);
+
+    size_t stagnation = 0;
     for (size_t index_g = 0; index_g < generations; index_g++)
     {
-        // select
-        // mutate
-        // cross-over
-        // evaluate
+        double previous_optimum = local_optimum;
+        
+        // operation
+        select(population, f);
+        mutate(population);
+        cross_over(population);
+        local_optimum = evaluate(population, f);
+
+        // another halting condition
+        if (previous_optimum >= local_optimum)
+            stagnation++;
+        else
+            stagnation = 0;
+        if (stagnation == GA_MAX_STAGNATION)
+        {
+            local_optimum = previous_optimum;
+            break;
+        }
     }
 
-    // evaluate return the best
+    return { local_optimum, clock.stop(time_unit::millisecond) };
 }
-
-// ask professor 
 
 STD_PSERVICE_END
 #endif

@@ -14,9 +14,10 @@
 using namespace pservice;
 
 objective_type parameter::objective = objective_type::minimum_point;
-int parameter::precision = PRECISION;
-int parameter::mutation_rate = 1;
-int parameter::creaxion_rate = 1;
+int parameter::precision = 5;
+int parameter::dimension = 100;
+double parameter::mutation_probability = 0.01;
+double parameter::creaxion_probability = 0.25;
 fct_ptr parameter::fitness_function = fctptr_dejong1;
 
 static void run(const function&);
@@ -43,7 +44,23 @@ int main()
     return EXIT_SUCCESS;
 }
 
+// for each dimension
 static void run(const function& f)
 {
-    genetic_algorithm(f, 150);
+    outcome sample[SAMPLE_NUMBER]{};
+    printer file(f);
+    
+    parameter::dimension = 10;
+    for (size_t i = 0; i < SAMPLE_NUMBER; i++)
+    {
+        sample[i] = genetic_algorithm(f);
+        file << sample[i];
+    }
+    
+    parameter::dimension = 30;
+    for (size_t i = 0; i < SAMPLE_NUMBER; i++)
+    {
+        sample[i] = genetic_algorithm(f);
+        file << sample[i];
+    }
 }

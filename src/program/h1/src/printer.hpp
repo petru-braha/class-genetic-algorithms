@@ -14,8 +14,6 @@
 
 STD_PSERVICE_BEGIN
 
-#define PATH_MAX_SIZE 128
-
 //------------------------------------------------
 // methods:
 

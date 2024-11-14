@@ -5,30 +5,28 @@
 	- sample number (30)
 	- precision (5)
 	- number of threas
-	- dimension (30, 100)
-	- setting (best, first, worst)			
+	- dimension (5, 10, 30, 100)
+	- strategy (best, first, worst, sa)			
 
 - function
 	- minimum
 	- maximum
 	- implementation
 
-- algorithm
-	- hill climbing
-	- simulated anneling
-
-- threads
 - clock
 - printer
-- bitstring
+- threads
 - random numbers
+- bitstring
 
 ## details:
 
-- heuristic executions == 24 == 4 functions * 2 dimensions * 3 improvement types * 2 algorithm type
+- heuristic executions == 64 == 4 functions * 4 strategy_types * 4 dimensions
 	- each has a SAMPLE_NUMBER == 30
-		- each has N values
+		- each has 10.000 iterations
 			- each has dimension numbers
+	- this number is not representative for the amount of time used by the algorithm
+	- the different dimensions will have a major impact on time complexity
 
 - ceil(log2(N)) == nr of bits per dimension / number
 
@@ -55,17 +53,23 @@
 |average solution	     |	      |		|	    |
 |worst solution		     |	      |		|	    |
 
-## to do:
-
-- random between 0 1
-- simulated annealing
-- idea of constexpr: of dimension no more pointers
-- order of function
-- try blocks
-- change names of var
-
 # h2:
-- meta-GA
-- same functions
+
+
+## details:
+
+- kinda the same components
+- meta-GA / gray code
+- same functions => executions = 4 functions * 2 dimensions (8 VS 64)
 
 - i won't consider a singleton a good pattern for projects. one time use => functional programming
+
+## to do:
+
+- mutation and cross-over operators
+- debugging and experiments
+- constexpr for dimension => no more pointers
+- function order
+- try blocks
+- simulated annealing
+- names of variables

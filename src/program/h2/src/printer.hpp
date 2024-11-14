@@ -8,22 +8,21 @@
 
 #include "exception.hpp"
 
-#include "constant.hpp"
-#include "function.hpp"
 #include "outcome.hpp"
+#include "constant.hpp"
+#include "parameter.hpp"
+#include "function.hpp"
 
 STD_PSERVICE_BEGIN
-
-#define PATH_MAX_SIZE 128
 
 //------------------------------------------------
 // methods:
 
-void print_analysis_header(const function& f, strategy_type imprv,
+void print_analysis_header(const function& f, strategy_type strat,
     size_t dimension, std::ostream& out = std::cout)
 {
     out << "fct_id " << f.get_id() << ", improve ";
-    switch (imprv)
+    switch (strat)
     {
     case strategy_type::best:
         out << "best";
@@ -75,6 +74,7 @@ public:
     // constructors:
     ~printer();
     printer(const function&, strategy_type, size_t);
+    printer(const function&);
     printer() = delete;
 
     // specific methods:
@@ -93,7 +93,8 @@ printer::~printer()
     fclose(file);
 }
 
-printer::printer(const function& f, strategy_type imprv, 
+// for hill-climbing and simulated annealing
+printer::printer(const function& f, strategy_type strat, 
     size_t dimension) : path_entire(), file(nullptr)
 {
     (path_entire += path_header) += path_folder;
@@ -108,7 +109,7 @@ printer::printer(const function& f, strategy_type imprv,
     (file_name += component_path) += " ";
     (path_entire += component_path) += "/";
     
-    switch (imprv)
+    switch (strat)
     {
     case strategy_type::best:
         component_path = "improve best";
@@ -131,6 +132,39 @@ printer::printer(const function& f, strategy_type imprv,
     (file_name += component_path) += path_footer;
     path_entire += file_name;
     
+    if (fopen_s(&file, path_entire.c_str(), "w"))
+        throw exception_file();
+
+    // header of the file
+    fputs(std::string("minimum").c_str(), file);
+    fputs(std::string(",\t").c_str(), file);
+    fputs(std::string("time_measurement").c_str(), file);
+    fputs(std::string("\n").c_str(), file);
+}
+
+// for genetic algorithm
+printer::printer(const function& f)
+{
+    (path_entire += path_header) += path_folder;
+
+    std::string file_name;
+    std::string component_path = "fct_id ";
+
+    file_name += component_path;
+    path_entire += component_path;
+
+    component_path = std::to_string(f.get_id());
+    (file_name += component_path) += " ";
+    (path_entire += component_path) += "/";
+
+    component_path = "genetic algorithm";
+    (file_name += component_path) += " ";
+    (path_entire += component_path) += "/";
+
+    component_path = std::to_string(parameter::dimension) + "D";
+    (file_name += component_path) += path_footer;
+    path_entire += file_name;
+
     if (fopen_s(&file, path_entire.c_str(), "w"))
         throw exception_file();
 

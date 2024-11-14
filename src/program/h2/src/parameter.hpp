@@ -2,7 +2,6 @@
 #define _0PARAMETER0_
 
 #include <pservice_base>
-#include <numbers>
 #include "constant.hpp"
 
 STD_PSERVICE_BEGIN
@@ -14,16 +13,18 @@ struct parameter
 {
 	static objective_type objective;
 	static int precision;
-	static int mutation_rate;
-	static int creaxion_rate; // cross-over rate
+	static int dimension;
+	static double mutation_probability;
+	static double creaxion_probability; // cross-over rate
 	static fct_ptr fitness_function;
 
-	static constexpr double bad_value()
+	static constexpr double poor_value()
 	{
-		return 
+		return (objective == objective_type::maximum_point ?
+			-1 : 1) * std::numeric_limits<double>::infinity();
 	}
 
-	static bool is_better(double current, double candidate)
+	static bool is_better(double candidate, double current)
 	{
 		if (objective_type::minimum_point == objective)
 		{

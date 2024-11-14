@@ -24,10 +24,11 @@ public:
     }
 
     inline unsigned int operator () () { return generator(); }
-    inline unsigned int operator () (double minimum, double maximum) { 
-        return generator(); 
+    
+    inline double operator () (double minimum, double maximum) { 
+        std::uniform_real_distribution<> distribution(minimum, maximum);
+        return distribution(generator); 
     }
-    // TODO
 };
 
 STD_PSERVICE_END
