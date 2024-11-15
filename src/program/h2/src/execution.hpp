@@ -21,6 +21,8 @@ STD_PSERVICE_BEGIN
 typedef bitstring chromosome;
 typedef bool gene;
 
+random_generator g;
+
 //------------------------------------------------
 // component methods:
 
@@ -62,24 +64,22 @@ double* convert(const bitstring& b, const function& f,
 //------------------------------------------------
 // operators:
 
-double* best_fitness_values = nullptr;
+std::vector<double> population_fitness(POPULATION_SIZE);
 
-double evaluate(std::vector<chromosome>& population, const function& f)
+double evaluate(const std::vector<chromosome>& population, const function& f)
 {
     double fittest = parameter::poor_value();
 
     for (size_t i = 0; i < population.size(); i++)
     {
-        double* fitness_values = convert(population.at(i), f, parameter::dimension);
-        double candidate = f.exe(fitness_values);
+        double* numbers = convert(population.at(i), f, parameter::dimension);
+        double candidate = f.exe(numbers);
+        delete[]numbers;
+        
         if (parameter::is_better(candidate, fittest))
-        {
-            fittest = candidate; 
-            best_fitness_values ? delete[]best_fitness_values : (void)0;
-            best_fitness_values = fitness_values;
-        }
-        else
-            delete[]fitness_values;
+            fittest = candidate;
+
+        population_fitness[i] = candidate;
     }
     
     return fittest;
@@ -90,26 +90,27 @@ void select(std::vector<chromosome>& population, function fitness)
     // greater chance for those with a better fitness value
     double total_fitness = 0;
     for (size_t i = 0; i < population.size(); i++)
-        total_fitness += best_fitness_values[i];
+        total_fitness += population_fitness.at(i);
     
     std::vector<double> probabilities(population.size());
     for (size_t i = 0; i < population.size(); i++)
-        probabilities[i] = best_fitness_values[i] / total_fitness;
+        probabilities[i] = population_fitness.at(i) / total_fitness;
 
     std::vector<double> roulette(probabilities);
     for (size_t i = 1; i < population.size(); i++)
         roulette[i] += roulette.at(i - 1);
 
     // find next generation
-    random_generator g;
     std::vector<size_t> index_presence(population.size());
     for (size_t i = 0; i < population.size(); i++)
-        for (size_t spot = 0; spot < roulette.size(); spot++)
-            if (g(0, 1) <= roulette.at(spot))
-            {
-                index_presence[spot]++;
-                break;
-            }
+    {
+        double probability = g(0.0, 1.0);
+        size_t spot = 0;
+        while (spot < roulette.size() &&
+            probability > roulette.at(spot))
+            spot++;
+        index_presence[spot]++;
+    }
 
     std::vector<size_t> index_list_null;
     std::vector<size_t> index_list_real;
@@ -134,20 +135,83 @@ void select(std::vector<chromosome>& population, function fitness)
     }
 }
 
-void mutate(std::vector<chromosome>& population)
-{
-
-}
-
 void cross_over(std::vector<chromosome>& population)
 {
+    std::vector<size_t> indexes;
+    for (size_t index_chromosome = 0;
+        index_chromosome < population.size(); index_chromosome++)
+        if (g(0.0, 1.0) < parameter::creaxion_probability)
+            indexes.emplace_back(index_chromosome);
 
+    // odd number of chromosomes fix 
+    // random decision to add / remove
+    if (indexes.size() % 2 && g((size_t)0, (size_t)1))
+    {
+        size_t index_chromosome = 0;
+        
+        bool condition = true; // don't repeat any index
+        do
+        {
+            condition = true;
+            index_chromosome = g(0, population.size() - 1);
+            
+            for(size_t i = 0; i < indexes.size(); i++)
+                if (indexes.at(i) == index_chromosome)
+                {
+                    condition = false;
+                    break;
+                }
+        } while (false == condition);
+        
+        indexes.emplace_back(index_chromosome);
+    }
+
+    size_t gene_number = population.at(0).size();
+    size_t nr_c = indexes.size();
+    if (0 == nr_c % 2) // there is one chromosome left out
+        nr_c--; // it was refused to accept another one
+    // in this case: at the end of the loop |indexes| = 1
+
+    for (size_t it_c = 0; it_c < nr_c; it_c += 2)
+    {
+        // random mate
+        size_t index_frst = 0, index_last = 0;
+        index_frst = g(0, indexes.size() - 1);
+        index_last = g(0, indexes.size() - 1);
+        while(index_frst == index_last)
+            index_last = g(0, indexes.size() - 1);
+        indexes.erase(indexes.begin() + index_frst);
+        indexes.erase(indexes.begin() + index_last);
+
+        // for more redable code
+        chromosome& x = population.at(indexes[index_frst]);
+        chromosome& y = population.at(indexes[index_last]);
+
+        // temp = x; x = y; y = temp;
+        gene temp_gene;
+        size_t index_gene = g(0, gene_number - 2);
+        for (size_t i = index_gene + 1; i < gene_number; i++)
+        {
+            temp_gene = x[i];
+            x[i] = y[i];
+            y[i] = temp_gene;
+        }
+    }
+}
+
+void mutate(std::vector<chromosome>& population)
+{
+    size_t gene_number = population.at(0).size();
+    for (chromosome& c : population)
+        for (size_t index_gene = 0; index_gene < gene_number; index_gene++)
+            if (g(0.0, 1.0) < parameter::mutation_probability)
+                c[index_gene] = !c[index_gene];
 }
 
 //------------------------------------------------
 // genetic algorithm:
 
-outcome genetic_algorithm(const function& f, const size_t generations = 100)
+outcome genetic_algorithm(const function& f, const size_t generations)
 {
     time_measurement clock;
 
@@ -162,26 +226,28 @@ outcome genetic_algorithm(const function& f, const size_t generations = 100)
     {
         double previous_optimum = local_optimum;
         
-        // operation
+        // operators
         select(population, f);
-        mutate(population);
         cross_over(population);
+        mutate(population);
         local_optimum = evaluate(population, f);
 
         // another halting condition
         if (previous_optimum >= local_optimum)
-            stagnation++;
-        else
-            stagnation = 0;
-        if (stagnation == GA_MAX_STAGNATION)
         {
             local_optimum = previous_optimum;
-            break;
+            stagnation++;
+            if (GA_MAX_STAGNATION == stagnation)
+                break;
         }
+        else
+            stagnation = 0;
     }
 
     return { local_optimum, clock.stop(time_unit::millisecond) };
 }
+
+// stochastic error in sampling - chapter 4
 
 STD_PSERVICE_END
 #endif

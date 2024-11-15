@@ -66,8 +66,6 @@
 
 ## to do:
 
-- mutation and cross-over operators
-- debugging and experiments
 - constexpr for dimension => no more pointers
 - function order
 - try blocks

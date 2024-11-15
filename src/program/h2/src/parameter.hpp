@@ -33,7 +33,7 @@ struct parameter
 			return false;
 		}
 
-		if (candidate > current)
+		if (candidate > current) // maximum_point
 			return true;
 		return false;
 	}

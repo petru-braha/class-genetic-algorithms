@@ -25,9 +25,16 @@ public:
 
     inline unsigned int operator () () { return generator(); }
     
-    inline double operator () (double minimum, double maximum) { 
+    // [minimum, maximum]
+    inline size_t operator () (size_t minimum, size_t maximum) {
+        std::uniform_int_distribution<size_t> distribution(minimum, maximum);
+        return distribution(generator);
+    }
+  
+    // [minimum, maximum)
+    inline double operator () (double minimum, double maximum) {
         std::uniform_real_distribution<> distribution(minimum, maximum);
-        return distribution(generator); 
+        return distribution(generator);
     }
 };
 
