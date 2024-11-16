@@ -58,6 +58,7 @@
 
 ## details:
 
+- the function order is established by their computational dificulty (de jong 1's is the easiest => the first to be evaluated)
 - kinda the same components
 - meta-GA / gray code
 - same functions => executions = 4 functions * 2 dimensions (8 VS 64)
@@ -66,8 +67,11 @@
 
 ## to do:
 
+- if the algorithm stagnates => change parameters, don't stop
+- wrong values
+- pgplot gnuplot
+- structure for bits
 - constexpr for dimension => no more pointers
-- function order
 - try blocks
 - simulated annealing
 - names of variables

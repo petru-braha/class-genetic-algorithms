@@ -18,7 +18,7 @@ STD_PSERVICE_BEGIN
 //------------------------------------------------
 // methods:
 
-void print_analysis_header(const function& f, strategy_type strat,
+void hc_print_analysis_header(const function& f, strategy_type strat,
     size_t dimension, std::ostream& out = std::cout)
 {
     out << "fct_id " << f.get_id() << ", improve ";
@@ -39,6 +39,12 @@ void print_analysis_header(const function& f, strategy_type strat,
     }
 
     out << ", " << dimension << "D.\n\n";
+}
+
+void ga_print_header(const function& f, std::ostream& out = std::cout)
+{
+    out << "fct_id " << f.get_id() << ", ";
+    out << parameter::dimension << "D.\n\n";
 }
 
 [[deprecated("creates chaos of the parallel running")]]

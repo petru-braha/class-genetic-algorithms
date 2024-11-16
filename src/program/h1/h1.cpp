@@ -34,16 +34,16 @@ int main()
     setting::precision = PRECISION;
     
     const function de_jong_1(-5.12, 5.12, fctptr_dejong1); 
-    const function michalewicz(0, PI, fctptr_michalewicz);
     const function rastrigin(-5.12, 5.12, fctptr_rastrigin);
     const function schwefel(-500.0, 500.0, fctptr_schwefel);
+    const function michalewicz(0, PI, fctptr_michalewicz);
 
     time_measurement clock;
 
     run(de_jong_1);
-    //run(michalewicz);
     //run(rastrigin);
     //run(schwefel);
+    //run(michalewicz);
 
     std::cout << "the program ran for " 
         << clock.stop(time_unit::minute) << " minutes.\n";

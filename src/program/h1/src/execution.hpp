@@ -168,7 +168,7 @@ void parallel_iteration(local_outcome& o,
             hillclimbing, f, imprv, dimension);
     
     // query of the data
-    for (size_t i_thread = 0; i_thread < n_thread; i_thread++)
+    for (size_t i_thread = 0; i_thread <= n_thread; i_thread++)
     {
         local_outcome candidate = output[i_thread].get();
         if (setting::is_better(candidate.optimum, o.optimum))

@@ -64,9 +64,9 @@ double* convert(const bitstring& b, const function& f,
 //------------------------------------------------
 // operators:
 
-std::vector<double> population_fitness(POPULATION_SIZE);
-
-double evaluate(const std::vector<chromosome>& population, const function& f)
+double evaluate(const std::vector<chromosome>& population, 
+    std::vector<double>& population_fitness,
+    const function& f)
 {
     double fittest = parameter::poor_value();
 
@@ -85,7 +85,9 @@ double evaluate(const std::vector<chromosome>& population, const function& f)
     return fittest;
 }
 
-void select(std::vector<chromosome>& population, function fitness)
+void select(std::vector<chromosome>& population, 
+    const std::vector<double>& population_fitness,
+    const function& f)
 {
     // greater chance for those with a better fitness value
     double total_fitness = 0;
@@ -168,33 +170,38 @@ void cross_over(std::vector<chromosome>& population)
 
     size_t gene_number = population.at(0).size();
     size_t nr_c = indexes.size();
-    if (0 == nr_c % 2) // there is one chromosome left out
+    if (nr_c % 2) // there is one chromosome left out
         nr_c--; // it was refused to accept another one
     // in this case: at the end of the loop |indexes| = 1
 
     for (size_t it_c = 0; it_c < nr_c; it_c += 2)
     {
         // random mate
-        size_t index_frst = 0, index_last = 0;
+        size_t index_frst = 0, index_last = 0, ddd = indexes.size();
         index_frst = g(0, indexes.size() - 1);
         index_last = g(0, indexes.size() - 1);
         while(index_frst == index_last)
             index_last = g(0, indexes.size() - 1);
-        indexes.erase(indexes.begin() + index_frst);
-        indexes.erase(indexes.begin() + index_last);
-
+        
         // for more redable code
-        chromosome& x = population.at(indexes[index_frst]);
-        chromosome& y = population.at(indexes[index_last]);
+        size_t index_c0 = indexes[index_frst];
+        size_t index_c1 = indexes[index_last];
+        chromosome& c0 = population.at(index_c0);
+        chromosome& c1 = population.at(index_c1);
 
-        // temp = x; x = y; y = temp;
-        gene temp_gene;
+        // erase
+        indexes.erase(indexes.begin() + index_frst);
+        if (index_frst < index_last)
+            index_last--;
+        indexes.erase(indexes.begin() + index_last);
+        
+        // actual change
         size_t index_gene = g(0, gene_number - 2);
         for (size_t i = index_gene + 1; i < gene_number; i++)
         {
-            temp_gene = x[i];
-            x[i] = y[i];
-            y[i] = temp_gene;
+            gene temp_gene = c0[i];
+            c0[i] = c1[i];
+            c1[i] = temp_gene;
         }
     }
 }
@@ -218,8 +225,9 @@ outcome genetic_algorithm(const function& f, const size_t generations)
     std::vector<chromosome> population;
     for (size_t i = 0; i < POPULATION_SIZE; i++)
         population.emplace_back(f.get_n() * parameter::dimension);
-    
-    double local_optimum = evaluate(population, f);
+
+    std::vector<double> population_fitness(population.size());
+    double local_optimum = evaluate(population, population_fitness, f);
 
     size_t stagnation = 0;
     for (size_t index_g = 0; index_g < generations; index_g++)
@@ -227,10 +235,10 @@ outcome genetic_algorithm(const function& f, const size_t generations)
         double previous_optimum = local_optimum;
         
         // operators
-        select(population, f);
+        select(population, population_fitness, f);
         cross_over(population);
         mutate(population);
-        local_optimum = evaluate(population, f);
+        local_optimum = evaluate(population, population_fitness, f);
 
         // another halting condition
         if (previous_optimum >= local_optimum)

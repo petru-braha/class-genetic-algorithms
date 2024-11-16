@@ -12,7 +12,7 @@ constexpr size_t ITERATIONS_NUMBER = 10000;
 constexpr size_t SA_MAX_STAGNATION = 5;
 constexpr size_t PRECISION = 5;
 
-constexpr size_t GA_MAX_STAGNATION = 10;
+constexpr size_t GA_MAX_STAGNATION = 30;
 constexpr size_t POPULATION_SIZE = 100;
 constexpr size_t GENERATIONS_NUMBER = 100;
 

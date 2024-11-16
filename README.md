@@ -8,6 +8,6 @@
 ## H1 two heuristic algorithms
 
 - Hill Climbing 
-- Simulated annealing
+- Simulated Annealing
 
 ## H2 genetic algorithm
