@@ -4,15 +4,13 @@
 #include <pservice_base>
 #include <future>
 
-#include <limits>
 #include <vector>
-#include <array>
-#include "printer.hpp"
-#include "exception.hpp"
-
 #include "outcome.hpp"
-#include "generator.hpp"
 #include "constant.hpp"
+#include "exception.hpp"
+#include "printer.hpp"
+
+#include "generator.hpp"
 #include "bitstring.hpp"
 #include "function.hpp"
 
@@ -91,15 +89,15 @@ void select(std::vector<chromosome>& population,
 {
     // greater chance for those with a better fitness value
     double total_fitness = 0;
-    for (size_t i = 0; i < population.size(); i++)
+    for (size_t i = 0; i < population_fitness.size(); i++)
         total_fitness += population_fitness.at(i);
     
     std::vector<double> probabilities(population.size());
-    for (size_t i = 0; i < population.size(); i++)
+    for (size_t i = 0; i < population_fitness.size(); i++)
         probabilities[i] = population_fitness.at(i) / total_fitness;
 
     std::vector<double> roulette(probabilities);
-    for (size_t i = 1; i < population.size(); i++)
+    for (size_t i = 1; i < roulette.size(); i++)
         roulette[i] += roulette.at(i - 1);
 
     // find next generation
@@ -228,6 +226,10 @@ outcome genetic_algorithm(const function& f, const size_t generations)
 
     std::vector<double> population_fitness(population.size());
     double local_optimum = evaluate(population, population_fitness, f);
+    std::cout << local_optimum << '\n';
+
+    size_t gene_number = population.at(0).size();
+    parameter::mutation_probability = MUTATION_NUMBER / gene_number;
 
     size_t stagnation = 0;
     for (size_t index_g = 0; index_g < generations; index_g++)
@@ -248,10 +250,10 @@ outcome genetic_algorithm(const function& f, const size_t generations)
             if (GA_MAX_STAGNATION == stagnation)
                 break;
         }
-        else
-            stagnation = 0;
+        else stagnation = 0;
     }
 
+    std::cout << local_optimum << '\n';
     return { local_optimum, clock.stop(time_unit::millisecond) };
 }
 

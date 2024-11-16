@@ -1,13 +1,15 @@
 #ifndef _0PARAMETER0_
 #define _0PARAMETER0_
 
-#include <pservice_base>
-#include "constant.hpp"
+enum class objective_type
+{
+	minimum_point, maximum_point
+};
 
-STD_PSERVICE_BEGIN
-
-typedef double (*fct_ptr)(const double* const numbers,
-	const size_t dimension);
+enum class strategy_type
+{
+	best, first, worst, sa
+};
 
 struct parameter
 {
@@ -16,11 +18,10 @@ struct parameter
 	static int dimension;
 	static double mutation_probability;
 	static double creaxion_probability; // cross-over rate
-	static fct_ptr fitness_function;
 
 	static constexpr double poor_value()
 	{
-		return (objective == objective_type::maximum_point ?
+		return (objective_type::maximum_point == objective ?
 			-1 : 1) * std::numeric_limits<double>::infinity();
 	}
 
@@ -39,5 +40,4 @@ struct parameter
 	}
 };
 
-STD_PSERVICE_END
 #endif

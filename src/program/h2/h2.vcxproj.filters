@@ -33,10 +33,7 @@
     <ClInclude Include="src\generator.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\parameter.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\constant.hpp">
+    <ClInclude Include="include\parameter.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\printer.hpp">
@@ -49,6 +46,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\function.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\constant.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

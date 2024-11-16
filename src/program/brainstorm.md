@@ -67,6 +67,7 @@
 
 ## to do:
 
+- 17 minutes on threads VS 6 minutes on one thread (am i braindead?)
 - if the algorithm stagnates => change parameters, don't stop
 - wrong values
 - pgplot gnuplot

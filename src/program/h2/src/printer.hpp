@@ -10,7 +10,6 @@
 
 #include "outcome.hpp"
 #include "constant.hpp"
-#include "parameter.hpp"
 #include "function.hpp"
 
 STD_PSERVICE_BEGIN

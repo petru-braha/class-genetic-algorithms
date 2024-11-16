@@ -4,7 +4,6 @@
 #include <pservice_base>
 #include "f_pointer.hpp"
 #include "constant.hpp"
-#include "parameter.hpp"
 
 STD_PSERVICE_BEGIN
 
