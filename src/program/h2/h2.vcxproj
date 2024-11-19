@@ -134,7 +134,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="include\call.hpp" />
-    <ClInclude Include="src\constant.hpp" />
+    <ClInclude Include="constant.hpp" />
     <ClInclude Include="src\f_pointer.hpp" />
     <ClInclude Include="include\outcome.hpp" />
     <ClInclude Include="src\bitstring.hpp" />

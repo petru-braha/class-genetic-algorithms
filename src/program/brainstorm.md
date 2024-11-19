@@ -67,9 +67,10 @@
 
 ## to do:
 
-- 17 minutes on threads VS 6 minutes on one thread (am i braindead?)
-- if the algorithm stagnates => change parameters, don't stop
 - wrong values
+- if the algorithm stagnates => change parameters, don't stop
+- 17 minutes on threads VS 6 minutes on one thread (am i braindead?)
+- stochastic error in sampling - chapter 4
 - pgplot gnuplot
 - structure for bits
 - constexpr for dimension => no more pointers

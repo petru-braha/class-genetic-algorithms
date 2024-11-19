@@ -129,8 +129,8 @@ void select(std::vector<chromosome>& population,
     size_t index_index_p = 0;
     for (size_t i = 0; i < index_list_null.size(); i++)
     {
-        population[index_list_null[i]] = 
-            population[index_list_real[index_index_p]];
+        population[index_list_null.at(i)] = 
+            population[index_list_real.at(index_index_p)];
         index_index_p++;
     }
 }
@@ -226,7 +226,6 @@ outcome genetic_algorithm(const function& f, const size_t generations)
 
     std::vector<double> population_fitness(population.size());
     double local_optimum = evaluate(population, population_fitness, f);
-    std::cout << local_optimum << '\n';
 
     size_t gene_number = population.at(0).size();
     parameter::mutation_probability = MUTATION_NUMBER / gene_number;
@@ -243,7 +242,7 @@ outcome genetic_algorithm(const function& f, const size_t generations)
         local_optimum = evaluate(population, population_fitness, f);
 
         // another halting condition
-        if (previous_optimum >= local_optimum)
+        if (parameter::is_better(previous_optimum, local_optimum))
         {
             local_optimum = previous_optimum;
             stagnation++;
@@ -253,11 +252,56 @@ outcome genetic_algorithm(const function& f, const size_t generations)
         else stagnation = 0;
     }
 
-    std::cout << local_optimum << '\n';
     return { local_optimum, clock.stop(time_unit::millisecond) };
 }
 
-// stochastic error in sampling - chapter 4
+void test_genetic_algorithm(const function& f)
+{
+    std::vector<chromosome> population;
+    for (size_t i = 0; i < POPULATION_SIZE; i++)
+        population.emplace_back(f.get_n() * parameter::dimension);
+
+    std::vector<double> population_fitness(population.size());
+    double local_optimum = evaluate(population, population_fitness, f);
+
+    size_t gene_number = population.at(0).size();
+    parameter::mutation_probability = MUTATION_NUMBER / gene_number;
+    
+    double p_m = parameter::mutation_probability;
+    double p_x = parameter::creaxion_probability;
+
+    size_t stagnation = 0;
+    for (size_t index_g = 0;; index_g++)
+    {
+        std::cout << local_optimum << ' ' << index_g << '\n';
+        double previous_optimum = local_optimum;
+        
+        // operators
+        select(population, population_fitness, f);
+        cross_over(population);
+        mutate(population);
+        local_optimum = evaluate(population, population_fitness, f);
+
+        // another halting condition
+        if (parameter::is_better(previous_optimum, local_optimum))
+        {
+            //parameter::mutation_probability *= 20;
+            //if(parameter::creaxion_probability * 2 < 0.75)
+                //parameter::creaxion_probability *= 2;
+            local_optimum = previous_optimum;
+            stagnation++;
+            if (GA_MAX_STAGNATION == stagnation)
+                break;
+        }
+        else
+        {
+            //parameter::mutation_probability = p_m;
+            //parameter::creaxion_probability = p_x;
+            stagnation = 0;
+        }
+    }
+}
+
 
 STD_PSERVICE_END
 #endif

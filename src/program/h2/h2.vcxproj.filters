@@ -48,7 +48,7 @@
     <ClInclude Include="src\function.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\constant.hpp">
+    <ClInclude Include="constant.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

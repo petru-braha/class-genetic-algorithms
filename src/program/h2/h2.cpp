@@ -91,7 +91,8 @@ int main()
     //run<>(michalewicz);
 
     parameter::dimension = 30;
-    genetic_algorithm(michalewicz, GENERATIONS_NUMBER);
+    //for(size_t i = 0; i < 30; i++)
+        test_genetic_algorithm(de_jong_1);
 
     std::cout << "the program ran for " 
         << clock.stop(time_unit::minute) << " minutes.\n";
