@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <filesystem>
 #include <iostream>
 #include <future>
 #include <thread>
@@ -63,7 +64,9 @@ static void run<false>(const function& f)
     {
         outcome o = genetic_algorithm(f, GENERATIONS_NUMBER);
         file_10 << o;
+        std::cout << "samples analysed: " << it + 1 << '\n';
     }
+    file_10.close();
 
     parameter::dimension = 30;
     printer file_30(f);
@@ -72,7 +75,9 @@ static void run<false>(const function& f)
     {
         outcome o = genetic_algorithm(f, GENERATIONS_NUMBER);
         file_30 << o;
+        std::cout << "samples analysed: " << it + 1 << '\n';
     }
+    file_30.close();
 }
 
 int main()
@@ -82,6 +87,8 @@ int main()
     const function schwefel(-500.0, 500.0, fctptr_schwefel);
     const function michalewicz(0, PI, fctptr_michalewicz);
 
+    // delete its content and not the directory itself
+    std::filesystem::remove_all("../output/");
     std::cout << "h2 program starts running.\n\n";
     time_measurement clock;
 
@@ -92,9 +99,11 @@ int main()
 
     parameter::dimension = 30;
     //for(size_t i = 0; i < 30; i++)
-        test_genetic_algorithm(de_jong_1);
+        test_genetic_algorithm(michalewicz);
 
     std::cout << "the program ran for " 
         << clock.stop(time_unit::minute) << " minutes.\n";
     return EXIT_SUCCESS;
 }
+
+// to do: update fitness_function(), constant()

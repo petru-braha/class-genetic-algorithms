@@ -55,11 +55,29 @@
 
 # h2:
 
+- operators:
+	- select
+	- cross-over
+	- mutate
+	- switch
+	- inverse 
 
 ## details:
 
+- fitness function:
+
+if(maximum_point)
+	if(positive)
+		fitness() = objective_function();
+	if(negativa)
+		fitness(x) = objective_function(x) + constant
+else if(minimum_point)
+	if(positive)
+		fitness() = 1 / objective_function();
+	else if(negativa)
+		fitness() = -1 * objective_function();
+
 - the function order is established by their computational dificulty (de jong 1's is the easiest => the first to be evaluated)
-- kinda the same components
 - meta-GA / gray code
 - same functions => executions = 4 functions * 2 dimensions (8 VS 64)
 
@@ -67,13 +85,19 @@
 
 ## to do:
 
-- wrong values
+- converge cu adaptive mutation targeted pe biti nesemnificativi in faza de exploatare
+- cross-over optimization
+- cross-over with n cutting points
+- mutation second variant easier faster
 - if the algorithm stagnates => change parameters, don't stop
-- 17 minutes on threads VS 6 minutes on one thread (am i braindead?)
-- stochastic error in sampling - chapter 4
-- pgplot gnuplot
+- parameter::fitness_function
+
 - structure for bits
 - constexpr for dimension => no more pointers
+- 17 minutes on threads VS 6 minutes on one thread (am i braindead?)
+
+- pgplot gnuplot
+- stochastic error in sampling - chapter 4
 - try blocks
 - simulated annealing
 - names of variables

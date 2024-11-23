@@ -42,7 +42,7 @@ void hc_print_analysis_header(const function& f, strategy_type strat,
 
 void ga_print_header(const function& f, std::ostream& out = std::cout)
 {
-    out << "fct_id " << f.get_id() << ", ";
+    out << "\nfct_id " << f.get_id() << ", ";
     out << parameter::dimension << "D.\n\n";
 }
 
@@ -65,7 +65,7 @@ std::string normalize(double number)
 //------------------------------------------------
 // classes:
 
-const char path_header[] = "../../../";
+const char path_header[] = "../";
 const char path_folder[] = "output/";
 const char path_footer[] = ".csv";
 
@@ -83,6 +83,8 @@ public:
     printer() = delete;
 
     // specific methods:
+    bool open();
+    bool close();
     printer& operator << (const outcome&);
     printer& operator << (std::string&);
 
@@ -95,7 +97,7 @@ public:
 
 printer::~printer()
 {
-    fclose(file);
+    close();
 }
 
 // for hill-climbing and simulated annealing
@@ -137,8 +139,7 @@ printer::printer(const function& f, strategy_type strat,
     (file_name += component_path) += path_footer;
     path_entire += file_name;
     
-    if (fopen_s(&file, path_entire.c_str(), "w"))
-        throw exception_file();
+    open();
 
     // header of the file
     fputs(std::string("minimum").c_str(), file);
@@ -148,7 +149,7 @@ printer::printer(const function& f, strategy_type strat,
 }
 
 // for genetic algorithm
-printer::printer(const function& f)
+printer::printer(const function& f) : path_entire(), file(nullptr)
 {
     (path_entire += path_header) += path_folder;
 
@@ -170,8 +171,7 @@ printer::printer(const function& f)
     (file_name += component_path) += path_footer;
     path_entire += file_name;
 
-    if (fopen_s(&file, path_entire.c_str(), "w"))
-        throw exception_file();
+    open();
 
     // header of the file
     fputs(std::string("minimum").c_str(), file);
@@ -182,6 +182,26 @@ printer::printer(const function& f)
 
 //------------------------------------------------
 // specific methods:
+
+bool printer::open()
+{
+    if (file)
+        return false;
+
+    if (fopen_s(&file, path_entire.c_str(), "w"))
+        throw exception_file();
+    return true;
+}
+
+bool printer::close()
+{
+    if (nullptr == file)
+        return false;
+
+    fclose(file);
+    file = nullptr;
+    return true;
+}
 
 printer& printer::operator << (const outcome& o)
 {

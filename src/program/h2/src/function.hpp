@@ -10,6 +10,8 @@ STD_PSERVICE_BEGIN
 class function
 {
     // data members:
+    static unsigned int unused_id;
+
     unsigned int n, id;
     const double minimum;
     const double maximum;
@@ -31,9 +33,6 @@ public:
     const double& get_minimum() const;
     const double& get_maximum() const;
     fct_ptr get_pointer() const;
-
-    // static:
-    static unsigned int unused_id;
 };
 
 //------------------------------------------------
