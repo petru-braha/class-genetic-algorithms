@@ -1,0 +1,63 @@
+\documentclass[runningheads]{llncs}
+
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{xparse} % interval
+\usepackage{listings} % code
+
+%%------------------------------------------------
+%%------------------------------------------------
+
+\begin{document}
+\title{Experiment: \\ Concurrent execution}
+
+\author{P. Braha\inst{1}\orcidID{0009-0001-3636-2455}}
+\authorrunning{P. Braha}
+\institute{Alexandru Ioan Cuza University, Iasi IS 700221, Romania
+\email{petrubraha@gmail.com}\\
+\url{https://github.com/petru-braha}}
+
+\maketitle
+
+\begin{abstract} This work contains an overview of the client-server paradigm offering, to the public transport companies, a concrete (and open source) informational system connected with potential clients. This system provides a service that notifies the consumers about the traveling schedule, the available means of transport (e.g. trains) associated with their time and location, and other related knowledge such as status of departure/arrival and vehicle identification. Any user can report late arrivals, but in a controlled manner such that the misleading records are checked and ignored, if necessary. The application runs concurrently and achieves great communication speed with the customers and good quality of the responses delegated. The security of the system is accomplished by having two different running servers at different locations. If one of them fails, there exists a guaranteed backup. Their communication is not omitted. This paper represents an implementation reference for the field of network programming and management.
+
+\keywords{Server \and Client \and Concurrency \and Transport level \and I/O multiplexing \and Commands \and Threads \and Sockets }
+\end{abstract}
+
+%%------------------------------------------------
+%%------------------------------------------------
+
+\section{Introduction}
+
+"Experiment" is a project which involves compilation of two programs: one for the server and the other for client(s). It is in a professionally working state when two "server.c" instances are concurrently running indefinitely. One of such instance could manage x number of clients, where $x \in \left[0, 1024\right]$ (this limitation is later disclosed in the forth chapter). 
+
+The current document continues to explain the requirements of such a system, the logic behind it, and the real use cases. Within the next section, a short list of the adopted technologies can be explored. Choosing the right tools will determine the overall quality of the apps. In the third chapter, you may find the structure of the server application, and some illustrations of the routines executed. Following this, additional details, experiments, and observations are analyzed. The advantages and roles of the decisions took regarding the implementation are discussed too. This part creates an opening of the API definitions at application level. The conclusions will summarize my project and propose some scenarios where the "RR application" could be useful.
+
+\subsection{Motivation}
+
+
+
+%%------------------------------------------------
+%%------------------------------------------------
+
+\section{Conclusions}
+
+Finally.
+
+\begin{credits}
+    \subsubsection{\ackname} This open-source project has no financial support. Improvements and updates are expected only for the following month.
+    \subsubsection{\discintname}
+    There are no competing interests to declare, that could be relevant to the content of this article.
+    \end{credits}
+    
+
+%%------------------------------------------------
+%%------------------------------------------------
+
+\begin{thebibliography}{8}
+
+\bibitem{fork-vs-thread} Sysel, Martin. "A comparison of processes and threads creation". Software Engineering Perspectives in Intelligent Systems: Proceedings of 4th Computational Methods in Systems and Software 2020, Vol. 1 4. Springer International Publishing, 2020. \\ 
+\doi{10.1007/978-3-030-63322-6_85}
+
+\end{thebibliography}
+\end{document}

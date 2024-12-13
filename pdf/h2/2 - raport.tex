@@ -21,9 +21,9 @@
 
 \pgfplotsset{compat=1.18}
 
-\title{H1 – Testing Hill-Climbing and Simulated annealing \\ on numerical benchmark functions}
+\title{H2 – Testing standard genetic algorithm on numerical benchmark functions}
 \author{Dincă Georgian(2E2) - Brahă Petru(2E3)}
-\date{October 29, 2024}
+\date{November 26, 2024}
 
 %%------------------------------------------------
 %% actual document:
@@ -34,23 +34,22 @@
 
 \begin{abstract}
 
-This work contains a comparative analysis of local search strategies applied to four numerical optimization benchmark functions: Sphere, Rastrigin, Schwefel and Michalewicz. Three search strategies are evaluated - Best Improvement, First Improvement, and Simulated annealing - across the following problem dimensions (10D, 30D, and 100D), with an additional investigation of Worst Improvement approach for the lower-dimensional cases (10D and 30D). In addition to solution quality, the execution times of each strategy were recorded and compared. We observe from these results that Simulated Annealing outperforms all other strategies and Worst Improvement is not well-suited for these benchmark functions as it performs significantly worse both in terms of results and computation time.
+This work contains an in-depth analysis of the standard genetic algorithm applied to four numerical optimization functions: Sphere, Rastrigin, Schwefel and Michalewicz. Each of them were evaluated across the following dimension-cases: 10, 30, and 100. In addition to the solution quality, the execution times were recorded. This paper compares the current findings with the previous experiment where the Hill Climbing method was used (alongside four different improvement strategy types). !actual results!
 
 \end{abstract}
 
 \section{Introduction}
 
-\subparagraph{}
-This paper contains a comparative analysis of three primary local search strategies — Best Improvement, First Improvement, and Simulated Annealing — when applied to four well-known numerical optimization benchmark functions: Sphere, Rastrigin, Schwefel, and Michalewicz. We examine these strategies across multiple problem dimensions (10D, 30D, and 100D), and include an additional evaluation of the Worst Improvement approach for the 10D and 30D cases.
+This paper starts by presenting the implementation details and the methods adopted. Every disclosure about the choices done in the code will be covered in the second chapter. In the third one, there is a short description of the experiment, which includes insights about the parameters used. Following the technical part, you can find an extensive review of the outputs produced by the constructed program together with their interpretation subsections. The studied values will be then compared with the Hill Climbing's results, previously discussed in H1. Last but not least, the formulated conclusion will end the current article.\\
 
-\subparagraph{}
-The motivation behind Simulated Annealing lies in its ability to overcome local optima by probabilistically accepting non-improving moves based on a temperature-controlled mechanism. This makes it a compelling candidate for comparison against regular hill-climbing approaches such as Best Improvement, First Improvement or Worst Improvement. Additionally, the Worst Improvement strategy, though less conventional, is analyzed to provide insight into its behavior and suitability for different problem dimensions.
+In brief, the genetic algorithm probabilistically returns good enough answers comparable with the optimal point. Their mechanism imitates the natural model explained by Darwin's theory: each individual fights for survival whereas only the fittest succeed. The beginning of its procedure initialize at random n chromosomes, which then are tested and modified throughout multiple generations. In every such iteration the superior representations are selected to replace those with poor fitness values, shaping the population. Searching for new candidates is accomplished by the cross-over and mutation, traditional operators. 
 
-\subparagraph{}
-The results we see highlight the strengths and weaknesses of each approach. While Simulated Annealing demonstrates its effectiveness in navigating complex landscapes and escaping local optima, yielding better results than all other strategies, Best Improvement shows a consistent performance with slightly lower computational costs, however significantly inferior results compared to SA for functions rich in local optima such as Rastrigin and Schwefel. First Improvement gives worse results at the expense of significantly reduced computation time. Worst Improvement strategy however, illustrates its limitations in both performance and execution time, with poor performance across all metrics and test cases. These findings aim to guide the selection of local search strategies based on problem characteristics and desired outcomes.
+\paragraph{}
+some observations and some results.
 
-\subparagraph{}
-We used 5 digits of precision for the results. Each experimental configuration executes 20,000 iterations per sample, with 30 independent samples for statistical robustness.
+\subsection{Motivation}
+
+Our investigation proposes a characterization of the genetic algorithm's behavior. This topic is a matter of our laboratory work during the university studies. De Jong advised to not "perceive GAs themselves as optiomization algorithms" \cite{dejong}; our work explores the evolutionary tool regarding his statement.
 
 %%------------------------------------------------
 %% explanations:
@@ -59,26 +58,23 @@ We used 5 digits of precision for the results. Each experimental configuration e
 
 \subsection{Hardware}
 
-\subparagraph{}
+\paragraph{}
 The algorithms have been implemented to leverage GPU acceleration using NVIDIA's CUDA framework. The system used to run the tests was equipped with an RTX 4090 graphics card, mobile version. The parallel nature of local search algorithms, where multiple independent search iterations can be executed simultaneously, makes them particularly well-suited for GPU implementation due to their architecture having a huge number of cores and threads that can run in parallel. Each search iteration operates independently on its own thread, which parallelizes the workload efficiently.
 
-\subparagraph{}
+\paragraph{}
 Our GPU implementation utilizes a thread organization scheme of 32 threads per block, aligning with the NVIDIA warp size for optimal execution efficiency. This configuration minimizes thread divergence and maximizes memory coalescing, concluding in improved computational performance.
 
-\subparagraph{}
+\paragraph{}
 To attempt function evaluation, we employed two popular optimization algorithms: Hill Climbing and Simulated annealing (hybridization of HC best improvement); both are covered in the next subsections.
 
-\subsection{Hill Climbing implementation}
+\subsection{Gentic algorithm implementation}
 
-\subparagraph{}
-The vast search interval of the function is explored uniquely. First of all, it calculates $N$, a precise cardinal of random candidate numbers inside the domain, using the formula: $ N = (b-a)10^p$,  where $a$ and $b$ are lower/upper bounds of the interval in question, and $p$ being the established precision. The magic begins with the representation of these N values: as bit strings. The random number generation is, in fact, a random bit generator; we used NVIDIA's pseudo-random number generator algorithm. Its conversion process is ironed out by the following fitness function: $$fitness(bitstring) = a + decimal(bitstring) \cdot (b - a) / (2^n - 1), n = \ceil{log_2N} .$$
-
-\subparagraph{}
+\paragraph{}
 The primary goal is to identify a peak solution by continually moving towards neighboring solutions with higher fitness outcomes. A neighbor of a bit string is a copy of the current representation but with only one flipped bit. In other words, for every bit there is associated with a neighbor; this can be understood as an iteration of the string. For only one run of the algorithm, improvements are performed until there is no better value in the neighborhood - the end condition. The real values are then computed and the result of the benchmark functions concerning these computations is returned.
 
 \subsection{Simulated annealing implementation}
 
-\subparagraph{}
+\paragraph{}
 Our implementation features a hybrid approach that combines traditional SA with a Best Improvement local search phase after the temperature drops and it can no longer escape the local optimum. The initial temperature $T_0$ is dynamically calculated based on the dimension number using the formula $T_0 = \left|\frac{fmax \cdot n}{\ln(0.8)}\right|$, where $n$ is the number of dimensions. $fmax$ is the aproximative maximum value of the function for one dimension and assures that the temperature can be high enough for exploration:
 \begin{itemize} 
     \item Sphere's is very simple and doesn't need optimized temperature initialization
@@ -88,35 +84,30 @@ Our implementation features a hybrid approach that combines traditional SA with 
 \end{itemize} 
 This adaptive initial temperature ensures appropriate scaling of the acceptance probability across different problem dimensions. 
 
-\subparagraph{}
+\paragraph{}
 The cooling schedule is implemented with a geometric decay and a cooling rate of 0.985, maintaining a balance between exploration and exploitation. The algorithm progresses until either the temperature falls below a threshold of $T_0\times10^{-8}$, or when the search stagnates for four consecutive temperature changes. For each temperature, we attempt to achieve $20\cdot n$ successful moves, where n is the number of dimensions, with a maximum of $200\cdot n$ total attempts per temperature to prevent excessive computation in flat regions of the search space. 
 
-\subparagraph{}
+\paragraph{}
 The solution representation uses a binary encoding, with neighborhood moves implemented as single bit-flips. Move acceptance follows the standard Metropolis \cite{m} criterion:
 \begin{itemize}
     \item Improvements are always accepted
     \item Deteriorating moves are accepted with probability $\exp\left(-\frac{| \Delta f |}{T}\right)$, where $\Delta f$ is the absolute fitness difference and T is the current temperature
 \end{itemize}
 
+\section{Experiment's description}
+
+To ensure precise outcomes, we increased the number of decimal places after 0, from five to seven. This approach provided even stronger numbers with meaningless computation cost. Similarly with the previous analysis - H1 - the 10, 30, and 100 dimensions of the numerical functions were examined; this allows us to firmly state the differences obtained from both statistics.
+
+The population is formed out of 100 chromosomes which 
+pass through 20.000 generations. The probability of reproduction is 0.25 with five cutting points and the mutation rate is 0.01 per chromosome.
+
 %%------------------------------------------------
 %% end of presentation:
 
 \newpage
-\section{Results}
-
-%%------------------------------------------------
+\section{Experiment's results}
 
 \subsection{Sphere}
-$$f(\mathbf{x}) = \sum_{i=1}^{n} x_i^2 , x_i \in \left[ -5.12, 5.12 \right] $$
-
-%%------------------------------------------------
-
-\begin{figure}[!h]
-\includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{sphere.png}
-  \caption{Sphere's 2-dimensional graph function \cite{sf-uni-sp}}
-\end{figure}
-
-%%------------------------------------------------
  
 \begin{table}[htbp]
 \begin{minipage}{.4\linewidth}
@@ -191,18 +182,7 @@ $$f(\mathbf{x}) = \sum_{i=1}^{n} x_i^2 , x_i \in \left[ -5.12, 5.12 \right] $$
 \setcounter{table}{0}
 
 %%------------------------------------------------
-
 \subsection{Rastrigin}
-$$ f(x) = A \cdot n + \sum_{i=1}^n \left[ x_i^2 - 10 \cdot cos(2 \pi x_i) \right] , x_i \in \left[ -5.12, 5.12 \right] $$
-
-%%------------------------------------------------
-
-\begin{figure}[!h]
-\includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{rastrigin.png}
-  \caption{Rastrigin's 2-dimensional graph function \cite{sf-uni-ra}}
-\end{figure}
-
-%%------------------------------------------------
     
 \begin{table}[htbp]
 \begin{minipage}{.4\linewidth}
@@ -279,17 +259,6 @@ $$ f(x) = A \cdot n + \sum_{i=1}^n \left[ x_i^2 - 10 \cdot cos(2 \pi x_i) \right
 %%------------------------------------------------
 
 \subsection{Schwefel}
-$$f(\mathbf{x}) = -\sum_{i=1}^{n} x_i \cdot \sin\left(\sqrt{|x_i|}\right) , x_i \in \left[-500,500\right]$$
-
-%%------------------------------------------------
-
-\begin{figure}[!h]
-\includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{schwefel.png}
-  \caption{Schwefel's 2-dimensional graph function \cite{sf-uni-sw}}
-\end{figure}
-\vspace{0.5cm}
-
-%%------------------------------------------------
 
 \begin{table}[htbp]
 \begin{minipage}{.4\linewidth}
@@ -366,17 +335,6 @@ $$f(\mathbf{x}) = -\sum_{i=1}^{n} x_i \cdot \sin\left(\sqrt{|x_i|}\right) , x_i 
 %%------------------------------------------------
 
 \subsection{Michalewicz}
-$$f(\mathbf{x}) = -\sum_{i=1}^{n} \sin(x_i) \cdot \left(\sin\left(ix_i^2 / \pi\right)\right)^{2m} , m = 10, x_i \in \left[0,\pi\right]$$
-
-%%------------------------------------------------
-
-\begin{figure}[!h]
-\includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{michalewicz.png}
-  \caption{Michalewicz's 2-dimensional graph function \cite{sf-uni-mc}}
-\end{figure}
-\vspace{0.5cm}
-
-%%------------------------------------------------
 
 \begin{table}[htbp]
 \begin{minipage}{.4\linewidth}
@@ -451,12 +409,12 @@ $$f(\mathbf{x}) = -\sum_{i=1}^{n} \sin(x_i) \cdot \left(\sin\left(ix_i^2 / \pi\r
 
 \subsection{Interpretation}
 
-\subparagraph{}
+\paragraph{}
 The experimental results demonstrate that \textit{\textbf{Best Improvement}} consistently outperforms \textit{\textbf{First Improvement}} in solution quality across all test functions, particularly in higher dimensions, however at a higher computational cost. \textit{\textbf{Simulated annealing}} exhibits superior performance by escaping local optima, especially notable for \textbf{Rastrigin} and \textbf{Schwefel} functions, yielding better outputs when compared against \textit{\textbf{Best Improvement}}. Finally, \textit{\textbf{Worst Improvement}} showed inferior results at a higher computational cost than all other strategies.
 
 \section{Conclusions}
 
-\subparagraph{}
+\paragraph{}
 Looking into our results, it can safely be stated that the Hill Climbing algorithm is efficient and succeeds in delivering significant values, in the search for the global minimum. Comparing it with the deterministic approach, the time is much less than the brute-force traversal of the graph function. The different improvement settings showcase diverse trade-offs between these designs which can be further exploited. \\
 
 An exemplary observation would be the Simulated annealing contributions; they usually bring better solutions that are scalable for real competitive environments. It's useful in concrete cases, even though considerable time intervals were detected. \\
@@ -468,32 +426,28 @@ Overall, this study provides valuable insights into the application of optimizat
 
 \begin{thebibliography}{9}
 
-\bibitem{m}
-    Metropolis \url{https://www.sciencedirect.com/topics/computer-science/metropolis-algorithm} \\  
-  
+\bibitem{michalewicz} Michalewicz Zbigniew. "Genetic algorithms + data structures = evolution programs". Springer Science \& Business Media, 2013.
+
+\bibitem{dejong} De Jong, Kenneth. "Genetic algorithms: A 10 year perspective." Proceedings of the first International Conference on Genetic Algorithms and their Applications. Psychology Press, 2014.
+
 \bibitem{course}
-  Course page \\ Hill Climbing documentation.
+  Croitoru Eugen. Genetic algorithms course. Alexandru Ioan Cuza University, 2024.\\
   \url{https://profs.info.uaic.ro/eugen.croitoru/teaching/ga/}
 
-\bibitem{cuda}
-  Nvidia Cuda coalesced memory \\
-  \url{https://docs.nvidia.com/cuda/cuda-c-best-practices-guide/index.html\# coalesced-access-to-global-memory}
-
-\bibitem{sf-uni-sp}
-  Simon Fraser University \\ Sphere's function.
+\bibitem{uni-sp} Surjanovic Sonja and Bingham Derek. Sphere's function. Simon Fraser University, 2013.\\
   \url{https://www.sfu.ca/~ssurjano/spheref.html}
 
-\bibitem{sf-uni-ra}
-  Simon Fraser University \\  Rastrigin's function.
+\bibitem{uni-ra} Surjanovic Sonja and Bingham Derek. Rastrigin's function. Simon Fraser University, 2013.\\
   \url{https://www.sfu.ca/~ssurjano/rastr.html}
 
-\bibitem{sf-uni-sw}
-  Simon Fraser University \\ Schwefel's function.
+\bibitem{uni-sw} Surjanovic Sonja and Bingham Derek. Schwefel's function. Simon Fraser University, 2013.\\
   \url{https://www.sfu.ca/~ssurjano/schwef.html}
 
-\bibitem{sf-uni-mc}
-  Simon Fraser University \\ Michalewicz's function.
+\bibitem{uni-mc} Surjanovic Sonja and Bingham Derek. Michalewicz's function. Simon Fraser University, 2013.\\
   \url{https://www.sfu.ca/~ssurjano/michal.html}
+
+\bibitem{m}
+    Metropolis \url{https://www.sciencedirect.com/topics/computer-science/metropolis-algorithm} \\  
 
 \bibitem{l}
   Overleaf \\ LaTeX training.

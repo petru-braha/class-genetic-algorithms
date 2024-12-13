@@ -1,13 +1,23 @@
 # Genetic algoritms
 
-- each homework is composed of source code, outputs, and raports (interpretation of outputs)
-- source code is being made out of
-	- the program itself
-	- statistics on it's output
+- the source directory contains:
+	- each homework
+	- R statistics measurements
+	- outputs directory
 
-## H1 two heuristic algorithms
+## H1 - Hill Climbing algorithm
 
-- Hill Climbing 
+- Best improvement
+- First improvement
+- Worst improvement
 - Simulated Annealing
 
-## H2 genetic algorithm
+## H2 - genetic algorithm
+
+- selection
+- cross-over
+- mutation
+
+- etilitism
+- stagnation halting condition
+- meta-ga

@@ -1,6 +1,3 @@
 - introduction – functions, methods, results, categorizing, temperature, simulated annealing - explains your paper: experiments, data, result;
-- write about the restriction rules (worst improvement) 
 - method: hardware/software, algorithm, how did you fine tune
 - after each table interpretation
-
-- mla citing technique

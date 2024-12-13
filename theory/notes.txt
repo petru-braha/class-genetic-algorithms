@@ -5,7 +5,7 @@
 - \input == #include
 
 - interpretation after result \ subsection of the results
-- mla  = modern language association 
+- mla  = modern language association (citation technique)
 
 - about parallelism:
 	- smallest things
